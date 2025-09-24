@@ -1,0 +1,145 @@
+
+<nav style="background:#222; padding:10px;">
+  <ul style="list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap;">
+    <li style="margin:0 10px;"><a href="index.html" style="color:white; text-decoration:none;">Home</a></li>
+    <li style="margin:0 10px;"><a href="account.html" style="color:white; text-decoration:none;">Account</a></li>
+    <li style="margin:0 10px;"><a href="wallet.html" style="color:white; text-decoration:none;">Wallet</a></li>
+    <li style="margin:0 10px;"><a href="smm.html" style="color:white; text-decoration:none;">SMM</a></li>
+    <li style="margin:0 10px;"><a href="gmail.html" style="color:white; text-decoration:none;">Gmail</a></li>
+    <li style="margin:0 10px;"><a href="tiktop.html" style="color:white; text-decoration:none;">TikTok</a></li>
+    <li style="margin:0 10px;"><a href="getlike.html" style="color:white; text-decoration:none;">GetLike</a></li>
+    <li style="margin:0 10px;"><a href="center.html" style="color:white; text-decoration:none;">Center</a></li>
+  </ul>
+</nav>
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Income Tutorial Series</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Google Fonts for Bengali -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans Bengali', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #ffffff);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.25rem;
+        }
+        .card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            border: 1px solid #f3f4f6;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .btn {
+            transition: all 0.3s ease-in-out;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+            background-color: #2c7a7b;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        .new-back-btn {
+            position: fixed; /* Changed from absolute to fixed */
+            top: 15px;
+            left: 15px;
+            z-index: 1000; /* Ensures button stays above other content */
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+        .new-back-btn i {
+            font-size: 1.1em;
+        }
+        .new-back-btn:hover {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .new-back-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        @media (max-width: 480px) {
+            .new-back-btn {
+                top: 10px;
+                left: 10px;
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Back Button -->
+    <a href="index.html" class="new-back-btn">
+        <i class="fas fa-chevron-left"></i> Back
+    </a>
+
+    <!-- Header -->
+    <header class="bg-teal-600 text-white py-6">
+        <div class="container">
+            <h1 class="text-2xl md:text-3xl font-bold text-center">Income Tutorial Series</h1>
+            <p class="text-center mt-2 text-base md:text-lg">সহজে এবং কার্যকরভাবে অনলাইনে ইনকাম শুরু করুন!</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container my-8 flex-grow">
+        <!-- Tutorial Videos Section -->
+        <section class="mb-10">
+            <h2 class="text-xl md:text-2xl font-bold text-teal-700 mb-6 text-center">Tutorial Videos</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Video 1 -->
+                <div class="card bg-white rounded-lg shadow-md p-5">
+                    <h3 class="text-lg font-semibold text-teal-600 mb-3">ভিডিও ১: গেট লাইক অ্যাকাউন্ট খোলা</h3>
+                    <p class="text-gray-600 mb-4 text-sm md:text-base">এই ভিডিওটি দেখে সহজেই একটি গেট লাইক অ্যাকাউন্ট খুলে নিন।</p>
+                    <a href="https://youtu.be/u5kPf_OeXvg?si=Vg5fq6xIMzb5cNcd" target="_blank" rel="noopener noreferrer" class="btn bg-teal-500 text-white px-5 py-2.5 rounded-full flex items-center justify-center focus:ring-2 focus:ring-teal-400 focus:outline-none">
+                        <i class="fas fa-play-circle mr-2"></i> ভিডিও দেখুন
+                    </a>
+                </div>
+                <!-- Video 2 -->
+                <div class="card bg-white rounded-lg shadow-md p-5">
+                    <h3 class="text-lg font-semibold text-teal-600 mb-3">ভিডিও ২: টিকটক একাউন্ট অ্যাড করা</h3>
+                    <p class="text-gray-600 mb-4 text-sm md:text-base">এই ভিডিওটি দেখে টিকটক একাউন্ট সংযুক্ত করুন।</p>
+                    <a href="https://youtu.be/hI37DWtURlM?si=gtXN0KuJK95Aqw6j" target="_blank" rel="noopener noreferrer" class="btn bg-teal-500 text-white px-5 py-2.5 rounded-full flex items-center justify-center focus:ring-2 focus:ring-teal-400 focus:outline-none">
+                        <i class="fas fa-play-circle mr-2"></i> ভিডিও দেখুন
+                    </a>
+                </div>
+                <!-- Video 3 -->
+                <div class="card bg-white rounded-lg shadow-md p-5">
+                    <h3 class="text-lg font-semibold text-teal-600 mb-3">ভিডিও ৩: গেট লাইকে কাজ করা</h3>
+                    <p class="text-gray-600 mb-4 text-sm md:text-base">উপরের ২টি ভিডিও দেখে নিন, তারপর এই ভিডিওটি দেখে দৈনিক ইনকাম করুন!</p>
+                    <a href="https://youtu.be/cMEdtkh5RC4?si=4twO7bw-1pNEWHFU" target="_blank" rel="noopener noreferrer" class="btn bg-teal-500 text-white px-5 py-2.5 rounded-full flex items-center justify-center focus:ring-2 focus:ring-teal-400 focus:outline-none">
+                        <i class="fas fa-play-circle mr-2"></i> ভিডিও দেখুন
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+<footer style="background:#222; color:white; text-align:center; padding:15px; margin-top:20px;">
+  <p>&copy; 2025 Takoven. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>

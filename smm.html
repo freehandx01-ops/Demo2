@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> - SMM Kingdom Tasks</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2F80ED; /* A vibrant blue */
+            --secondary-color: #27AE60; /* A friendly green */
+            --accent-color: #E67E22; /* An engaging orange for highlights */
+            --background-light: #F8F9FA; /* Very light gray */
+            --text-dark: #34495E; /* Dark blue-gray for main text */
+            --text-light: #526C87; /* Lighter blue-gray */
+            --border-color: #E0E0E0; /* Light border color */
+            --shadow-light: rgba(0, 0, 0, 0.08);
+            --shadow-medium: rgba(0, 0, 0, 0.12);
+        }
+
+        body {
+            font-family: 'Noto Sans Bengali', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px var(--shadow-medium);
+            overflow: hidden;
+            position: relative; /* Added for back button positioning */
+        }
+
+        .header {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Removed .header h1 i style as per request */
+
+        .header p {
+            color: var(--text-light);
+            font-size: 1.2em;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .section {
+            margin-bottom: 50px;
+            padding: 30px;
+            border-radius: 10px;
+            background-color: #fff; /* Changed to white for cleaner look */
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px var(--shadow-light);
+        }
+
+        .section h2 {
+            color: var(--secondary-color);
+            font-family: 'Poppins', sans-serif;
+            font-size: 2em;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section h2 i {
+            margin-right: 15px;
+            font-size: 1.3em;
+            color: var(--primary-color);
+        }
+
+        .section p {
+            margin-bottom: 15px;
+            color: var(--text-dark);
+            font-size: 1.05em;
+        }
+
+        .section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .section ul li {
+            margin-bottom: 12px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: flex-start;
+            font-size: 1.05em;
+        }
+
+        .section ul li i {
+            margin-right: 12px;
+            color: var(--secondary-color);
+            font-size: 1.1em;
+            margin-top: 5px;
+        }
+
+        /* Centering buttons */
+        .button-group {
+            text-align: center; /* Center for block-level buttons */
+            margin-top: 25px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            padding: 14px 28px;
+            background-color: var(--primary-color);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-weight: 600;
+            font-size: 1.1em;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: none;
+            cursor: pointer;
+            margin: 0 10px; /* Space between centered buttons */
+        }
+
+        .button i {
+            margin-right: 10px;
+            font-size: 1.1em;
+        }
+
+        .button:hover {
+            background-color: #256bbd;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .button.secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .button.secondary:hover {
+            background-color: #1f8e4c;
+        }
+
+        .button.small { /* New style for smaller button */
+            padding: 10px 20px;
+            font-size: 0.95em;
+        }
+
+        .video-btn-container {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Centered video button */
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .video-btn-container span {
+            flex-grow: 1;
+            color: var(--text-dark);
+            font-size: 1.05em;
+            font-weight: 500;
+        }
+
+        .video-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 18px;
+            background-color: #DDEBFD;
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-weight: 600;
+            font-size: 0.95em;
+            border: 1px solid var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .video-button i {
+            margin-right: 8px;
+            font-size: 1em;
+        }
+
+        .video-button:hover {
+            background-color: var(--primary-color);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .highlight-text {
+            font-weight: 700;
+            color: var(--accent-color);
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .highlight-text i {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .wallet-info {
+            background-color: var(--background-light);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+            text-align: center;
+            border: 1px dashed var(--secondary-color);
+        }
+
+        .wallet-info p {
+            margin-bottom: 15px;
+            font-size: 1.15em;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .wallet-number {
+            display: inline-flex;
+            align-items: center;
+            background-color: #fff;
+            border: 2px solid var(--primary-color);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-family: 'Poppins', monospace;
+            font-size: 1.4em;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+            color: var(--primary-color);
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .wallet-number i {
+            margin-left: 10px;
+            font-size: 0.9em;
+            color: var(--text-light);
+            transition: color 0.2s ease;
+        }
+
+        .wallet-number:hover {
+            background-color: #eaf3fe;
+            border-color: #256bbd;
+            transform: translateY(-1px);
+        }
+
+        .wallet-number.copied {
+            background-color: var(--secondary-color);
+            color: #fff;
+            border-color: var(--secondary-color);
+            transform: scale(1.02);
+        }
+
+        .wallet-number.copied i {
+            color: #fff;
+        }
+
+        .note {
+            font-style: italic;
+            color: var(--text-light);
+            margin-top: 15px;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+        }
+
+        .note i {
+            margin-right: 8px;
+            color: var(--accent-color);
+        }
+
+        /* Back button styles */
+        .back-button {
+            position: fixed; /* Changed to fixed for sticky behavior */
+            top: 20px; /* Adjusted top for better spacing */
+            left: 20px; /* Adjusted left for better spacing */
+            z-index: 1000;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+        .back-button i {
+            font-size: 1.1em;
+        }
+        .back-button:hover {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .back-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .highlight-video-text { /* New style for highlighting "ভিডিও দেখুন" */
+            font-weight: 700;
+            color: var(--primary-color); /* Or any color you prefer for highlighting */
+        }
+
+        .smm-kingdom-highlight { /* Updated style for SMM Kingdom highlight */
+            color: var(--accent-color); /* Using the pre-defined orange accent color */
+            font-weight: 600; /* Maintains good readability */
+            font-size: 0.8em; /* Slightly smaller for professional visual hierarchy */
+            vertical-align: middle; /* Ensures it aligns well with the main text */
+            margin-left: 8px; /* Adds a bit more spacing for clarity */
+            letter-spacing: 0.5px; /* Subtle letter spacing for a refined look */
+            text-shadow: 0 0 5px rgba(230, 126, 34, 0.2); /* A soft glow for highlight effect */
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+                padding: 15px;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .header h1 {
+                font-size: 2.2em;
+            }
+            .header p {
+                font-size: 1em;
+            }
+            .section {
+                margin-bottom: 30px;
+                padding: 20px;
+            }
+            .section h2 {
+                font-size: 1.6em;
+                margin-bottom: 15px;
+            }
+            .section p, .section ul li {
+                font-size: 0.95em;
+            }
+            .button, .video-button {
+                padding: 12px 20px;
+                font-size: 1em;
+                width: 100%;
+                justify-content: center;
+                margin-top: 15px;
+                margin-right: 0;
+                margin-left: 0; /* Remove left margin for full width */
+            }
+            .button.small { /* Adjust small button for mobile */
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+            .button-group {
+                text-align: center; /* Ensures buttons remain centered */
+                display: flex;
+                flex-direction: column; /* Stack buttons vertically on small screens */
+                align-items: center;
+            }
+            .video-btn-container {
+                flex-direction: column;
+                align-items: center; /* Center video button on small screens */
+            }
+            .wallet-number {
+                font-size: 1.2em;
+                padding: 10px 15px;
+            }
+            .back-button {
+                top: 10px;
+                left: 10px;
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            .section h2 {
+                font-size: 1.4em;
+            }
+            .wallet-number {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav style="background:#222; padding:10px;">
+  <ul style="list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap;">
+    <li style="margin:0 10px;"><a href="index.html" style="color:white; text-decoration:none;">Home</a></li>
+    <li style="margin:0 10px;"><a href="account.html" style="color:white; text-decoration:none;">Account</a></li>
+    <li style="margin:0 10px;"><a href="wallet.html" style="color:white; text-decoration:none;">Wallet</a></li>
+    <li style="margin:0 10px;"><a href="smm.html" style="color:white; text-decoration:none;">SMM</a></li>
+    <li style="margin:0 10px;"><a href="gmail.html" style="color:white; text-decoration:none;">Gmail</a></li>
+    <li style="margin:0 10px;"><a href="tiktop.html" style="color:white; text-decoration:none;">TikTok</a></li>
+    <li style="margin:0 10px;"><a href="getlike.html" style="color:white; text-decoration:none;">GetLike</a></li>
+    <li style="margin:0 10px;"><a href="center.html" style="color:white; text-decoration:none;">Center</a></li>
+  </ul>
+</nav>
+
+    <div class="container">
+        <a href="index.html" class="back-button">
+            <i class="fas fa-chevron-left"></i> Back
+        </a>
+
+        <div class="header">
+            <h1>আপনার উপার্জনের সাইট <span class="smm-kingdom-highlight">SMM Kingdom Tasks</span></h1>
+            <p>আপনার ইনকাম বৃদ্ধি করার দারুণ সুযোগ! সহজ ধাপে কাজ শিখে উপার্জন শুরু করুন।</p>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-chalkboard-teacher"></i> কাজ শেখার নির্দেশিকা</h2>
+            <p>আমাদের ধাপে ধাপে নির্দেশিকা অনুসরণ করে লাইক এবং ফলোর কাজগুলো শিখে নিন। আপনার উপার্জন যাত্রা শুরু করতে প্রস্তুত হন!</p>
+            <div class="video-btn-container">
+                <a href="https://youtu.be/eU_2gXeZnuE" target="_blank" class="video-button">
+                    <i class="fas fa-play-circle"></i> ভিডিও দেখুন
+                </a>
+            </div>
+            <div class="button-group">
+                <a href="https://t.me/smmkingdomtasksbot?start=ut7883180509" target="_blank" class="button secondary small">
+                    <i class="fas fa-user-plus"></i> এখনই রেজিস্ট্রেশন করুন
+                </a>
+            </div>
+            <p class="note"><i class="fas fa-lightbulb"></i> <span class="highlight-video-text">ভিডিও দেখুন</span> বাটনে ক্লিক করে, আগে ভিডিওটি দেখে নিবেন।</p>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-wallet"></i> সহজ পেমেন্ট পদ্ধতি</h2>
+            <p>আপনার উপার্জিত অর্থ সহজে উত্তোলন করুন। ঝামেলাবিহীন এবং দ্রুত পেমেন্টের অভিজ্ঞতা নিন!</p>
+            <div class="video-btn-container">
+                <a href="https://youtu.be/ZYRW5wle6aU" target="_blank" class="video-button">
+                    <i class="fas fa-play-circle"></i> ভিডিও দেখুন
+                </a>
+            </div>
+            <div class="wallet-info">
+                <p>উইথড্র করার ওয়ালেট নম্বর কপি করুন:</p>
+                <div id="walletNumber" class="wallet-number" onclick="copyToClipboard('P1131805469', this)">
+                    P1131805469 <i class="fas fa-copy"></i>
+                </div>
+                <p class="note"><i class="fas fa-info-circle"></i> নম্বরের উপর ক্লিক করলে স্বয়ংক্রিয়ভাবে কপি হয়ে যাবে।</p>
+            </div>
+            <p class="highlight-text"><i class="fas fa-dollar-sign"></i> <span class="highlight">৮৫০ পয়েন্টে ১০০ টাকা!</span></p>
+            <ul>
+                <li><i class="fas fa-check-circle"></i> কাজ শেষ হওয়ার সাথে সাথেই পেমেন্ট!</li>
+                <li><i class="fas fa-check-circle"></i> মাত্র ১ মিনিটেই আপনার অ্যাকাউন্টে টাকা!</li>
+                <li><i class="fas fa-check-circle"></i> আনলিমিটেড TikTok আইডি ব্যবহার করে কাজ করার সুযোগ!</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-cogs"></i> কাজের গুরুত্বপূর্ণ নিয়মাবলী</h2>
+            <p>আপনার কাজের প্রক্রিয়াকে আরও সহজ ও কার্যকরী করতে নিম্নলিখিত নিয়মগুলো অনুসরণ করুন:</p>
+            <ul>
+                <li><i class="fas fa-arrow-alt-circle-right"></i> যদি একটি আইডি দিয়ে কাজ করার পর নতুন কাজ না আসে —</li>
+                <li><i class="fas fa-sync-alt"></i> তাৎক্ষণিকভাবে অন্য আইডি যোগ করে কাজ চালিয়ে যান!</li>
+                <li><i class="fas fa-clock"></i> চিন্তার কিছু নেই! প্রায় ২০ মিনিট পর আপনার আগের আইডিতে আবার নতুন কাজ আসবে।</li>
+            </ul>
+            <div class="video-btn-container">
+                <span>দ্রুত টিকটক ফলোয়ার বাড়ানো</span>
+                <a href="https://youtube.com/shorts/y71RTn9BW7E?feature=share" target="_blank" class="video-button">
+                    <i class="fas fa-play-circle"></i> ভিডিও দেখুন
+                </a>
+            </div>
+            <p class="note"><i class="fas fa-lightbulb"></i> স্মার্টলি কাজ করুন এবং সর্বোচ্চ উপার্জন নিশ্চিত করুন!</p>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(text, element) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function() {
+                    element.classList.add('copied');
+                    element.innerHTML = 'কপি করা হয়েছে! <i class="fas fa-check"></i>';
+                    setTimeout(function() {
+                        element.classList.remove('copied');
+                        element.innerHTML = text + ' <i class="fas fa-copy"></i>';
+                    }, 1500);
+                }).catch(function(err) {
+                    console.error('Could not copy text: ', err);
+                    alert('কপি করতে সমস্যা হয়েছে, দয়া করে ম্যানুয়ালি কপি করুন: ' + text);
+                });
+            } else {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = 0;
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    element.classList.add('copied');
+                    element.innerHTML = 'কপি করা হয়েছে! <i class="fas fa-check"></i>';
+                    setTimeout(function() {
+                        element.classList.remove('copied');
+                        element.innerHTML = text + ' <i class="fas fa-copy"></i>';
+                    }, 1500);
+                } catch (err) {
+                    console.error('Fallback: Could not copy text: ', err);
+                    alert('কপি করতে সমস্যা হয়েছে, দয়া করে ম্যানুয়ালি কপি করুন: ' + text);
+                }
+                document.body.removeChild(textarea);
+            }
+        }
+    </script>
+
+<footer style="background:#222; color:white; text-align:center; padding:15px; margin-top:20px;">
+  <p>&copy; 2025 Takoven. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>

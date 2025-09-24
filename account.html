@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earnovate Profile Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --primary-blue:#3498db;
+            --secondary-blue:#2980b9;
+            --background-light:#f6f7f9;
+            --text-dark:#2c3e50;
+            --text-medium:#555;
+            --text-light:#7f8c8d;
+            --card-bg:#fff;
+            --border-light:#eee;
+            --danger-red:#e74c3c;
+            --danger-red-hover:#c0392b;
+            --success-green:#2ecc71;
+            --warning-orange:#f39c12;
+            --purple:#9b59b6;
+            --dark-purple:#8e44ad;
+            --teal:#1abc9c;
+
+            /* Navigation Bar Variables */
+            --primary: #4f46e5; /* Professional indigo for actions/branding */
+            --secondary: #10b981; /* Professional teal for highlights */
+            --dark: #1e293b;
+            --light: #ffffff;
+            --light-80: #f8fafc; /* For light backgrounds */
+            --glass-bg: rgba(255, 255, 255, 0.25); /* Adjusted transparency slightly */
+            --glass-blur: blur(15px);
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Adjusted shadow for auth forms */
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother transitions */
+            --radius: 12px;
+            --radius-lg: 16px; /* Larger radius for main auth/dashboard cards */
+            --font-stack: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        /* New: Set html and body to full height and control overflow */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevents body from scrolling globally */
+            font-family: var(--font-stack); /* Use new font stack */
+            color: var(--dark);
+        }
+        body{
+            background-color:var(--background-light);
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            line-height:1.4;
+            font-size:13px;
+            overflow-x:hidden; /* Keep horizontal overflow hidden */
+            position:relative;
+            display:flex;
+            flex-direction:column;
+            align-items:center; /* Center the container */
+        }
+        
+        .container{
+            max-width:400px; /* Reduced max-width slightly for desktop gap */
+            width: 100%; /* Ensure it takes full width on mobile */
+            margin:0; /* Remove auto margin for small screens, handle with flex center */
+            background-color:var(--card-bg);
+            height:100%; /* Container takes full height of the body */
+            box-shadow:0 0 12px rgba(0,0,0,.04);
+            overflow:hidden; /* Prevents container content from overflowing */
+            position:relative;
+            display:flex;
+            flex-direction:column;
+            padding-bottom: 90px; /* Increased padding to accommodate the new nav bar */
+        }
+        .page{
+            position:absolute;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background-color:var(--background-light);
+            overflow-y:hidden; 
+            transform:translateX(100%);
+            transition:transform .3s ease-out;
+            display:flex;
+            flex-direction:column;
+            z-index:100;
+        }
+        .page.active{
+            transform:translateX(0);
+            overflow-y:auto; /* Allow active pages to scroll */
+            padding-bottom: 90px; /* Increased padding to accommodate the new nav bar for pages */
+        }
+        .page-header{
+            background:linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-blue) 100%);
+            color:#fff;
+            padding:45px 15px 25px; /* Adjusted padding to accommodate new clip-path */
+            display:flex;
+            align-items:center;
+            position:sticky;
+            top:0;
+            z-index:101;
+            box-shadow:0 2px 5px rgba(0,0,0,.1);
+            border-radius:0; 
+            /* Updated clip-path for flat bottom with rounded corners */
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 100% 100%, 0% 100%); /* Base for flat bottom */
+            border-bottom-left-radius: 20px; /* Apply rounding to corners */
+            border-bottom-right-radius: 20px; /* Apply rounding to corners */
+            flex-shrink: 0; /* Prevent header from shrinking on scroll */
+        }
+        .page-header .back-btn{
+            font-size:18px;
+            margin-right:15px;
+            cursor:pointer;
+            color:rgba(255,255,255,.9);
+            transition:color .15s ease-out
+        }
+        .page-header .back-btn:active{color:#eee}
+        .page-header .page-title{
+            font-size:18px;
+            font-weight:600;
+            flex-grow:1;
+            text-align:center;
+            margin-right:30px
+        }
+        .page-content{
+            padding:15px;
+            flex-grow:1;
+            color:var(--text-medium);
+            line-height:1.6;
+            font-size:14px;
+        }
+        .page-content p{margin-bottom:1em}
+        /* New scrollable main view for header and content */
+        #scrollable-main-view {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Allows this container to scroll */
+            -webkit-overflow-scrolling: touch;
+            transition: transform .3s ease-out;
+            padding-bottom: 70px; /* Adjusted padding as per previous nav bar for consistency, final padding is from container */
+        }
+        #scrollable-main-view.hidden {
+            transform: translateX(-100%);
+            overflow-y: hidden; /* Hide scroll when it's hidden */
+        }
+        .header{
+            background:linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-blue) 100%);
+            color:#fff;
+            padding:45px 15px 25px; /* Adjusted padding to accommodate new clip-path */
+            border-radius:0; 
+            /* Updated clip-path for flat bottom with rounded corners */
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 100% 100%, 0% 100%); /* Base for flat bottom */
+            border-bottom-left-radius: 20px; /* Apply rounding to corners */
+            border-bottom-right-radius: 20px; /* Apply rounding to corners */
+            display:flex;
+            align-items:flex-start;
+            gap:12px;
+            z-index:50;
+            box-shadow:0 4px 10px rgba(0,0,0,.15);
+            flex-shrink:0
+        }
+        .profile-pic-container{
+            position:relative;
+            width:70px;
+            height:70px;
+            flex-shrink:0
+        }
+        .profile-pic{
+            width:100%;
+            height:100%;
+            border-radius:50%;
+            border:2px solid #6cb6ff;
+            object-fit:cover;
+            box-shadow:0 2px 5px rgba(0,0,0,.2);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden
+        }
+        .profile-pic.default-avatar{
+            background-color:#6cb6ff;
+            font-size:30px;
+            color:#fff;
+            font-weight:600;
+            text-transform:uppercase
+        }
+        .profile-pic img{
+            width:100%;
+            height:100%;
+            border-radius:50%;
+            object-fit:cover
+        }
+        .edit-profile-icon{
+            position:absolute;
+            bottom:0;
+            right:-5px;
+            background-color:var(--primary-blue);
+            color:#fff;
+            border-radius:50%;
+            width:24px;
+            height:24px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:12px;
+            cursor:pointer;
+            box-shadow:0 1px 3px rgba(0,0,0,.2);
+            transition:transform .1s ease-out
+        }
+        .edit-profile-icon:active{transform:translateY(1px)}
+        .user-info{
+            display:flex;
+            flex-direction:column;
+            flex-grow:1;
+            padding-top:0
+        }
+        .user-info .name-vip{
+            display:flex;
+            align-items:center;
+            gap:6px;
+            margin-bottom:2px
+        }
+        .user-info .name{
+            font-size:17px;
+            font-weight:600;
+            color:#fff;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis
+        }
+        .user-info .name-edit-wrapper{
+            display:flex;
+            align-items:center;
+            gap:8px
+        }
+        .user-info .name-edit-icon{
+            font-size:14px;
+            color:rgba(255,255,255,.8);
+            cursor:pointer;
+            transition:color .15s ease-out
+        }
+        .user-info .name-edit-icon:active{color:#ccc}
+        .user-info .name-input{
+            background:rgba(255,255,255,.2);
+            border:1px solid rgba(255,255,255,.4);
+            border-radius:5px;
+            color:#fff;
+            padding:4px 8px;
+            font-size:17px;
+            font-weight:600;
+            outline:none;
+            flex-grow:1;
+            box-sizing:border-box;
+            max-width:calc(100% - 30px)
+        }
+        .user-info .uid-text{
+            font-size:11px;
+            color:rgba(255,255,255,.75);
+            display:flex;
+            align-items:center;
+            gap:4px
+        }
+        .user-info .uid-text span{
+            color:#fff;
+            font-weight:500
+        }
+        .user-info .uid-text i{
+            font-size:10px;
+            cursor:pointer;
+            transition:color .15s ease-out
+        }
+        .user-info .uid-text i:active{color:#ccc}
+        /* New: UID copy feedback */
+        .uid-text .copy-feedback {
+            font-size: 10px;
+            color: var(--success-green);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            margin-left: 5px;
+        }
+        .uid-text .copy-feedback.show {
+            opacity: 1;
+        }
+
+        .card{
+            background-color:var(--card-bg);
+            margin:8px 12px;
+            padding:14px;
+            border-radius:12px;
+            box-shadow:0 2px 8px rgba(0,0,0,.05);
+            transition:transform .1s cubic-bezier(.25,.46,.45,.94),box-shadow .1s cubic-bezier(.25,.46,.45,.94)
+        }
+        .card:active{
+            transform:translateY(.5px);
+            box-shadow:0 1px 4px rgba(0,0,0,.06);
+            background-color:#fcfcfc
+        }
+        .grid-cards{
+            display:grid;
+            grid-template-columns:1fr;
+            gap:8px;
+            margin:8px 12px;
+            flex-shrink:0
+        }
+        .grid-cards.two-columns{grid-template-columns:1fr 1fr}
+        .grid-card{
+            display:flex;
+            flex-direction:column;
+            align-items:flex-start;
+            padding:12px;
+            border-radius:12px;
+            box-shadow:0 2px 7px rgba(0,0,0,.04);
+            background-color:var(--card-bg);
+            transition:transform .1s cubic-bezier(.25,.46,.45,.94),box-shadow .1s cubic-bezier(.25,.46,.45,.94)
+        }
+        .grid-card:active{
+            transform:translateY(.5px);
+            box-shadow:0 1px 4px rgba(0,0,0,.06);
+            background-color:#fcfcfc
+        }
+        .grid-card .icon-box{
+            padding:7px;
+            border-radius:9px;
+            margin-bottom:7px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            box-shadow:0 1px 3px rgba(0,0,0,.05)
+        }
+        .grid-card .icon-box i{
+            font-size:20px;
+            color:#fff
+        }
+        .grid-card .title{
+            font-size:13px;
+            font-weight:600;
+            color:var(--text-dark)
+        }
+        .grid-card .subtitle{
+            font-size:10px;
+            color:var(--text-light);
+            margin-top:2px
+        }
+        .grid-card.transaction .icon-box{background-color:var(--teal)}
+        .grid-card.redeem-code .icon-box{background-color:var(--purple)}
+        .list-item-card{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            cursor:pointer;
+        }
+        .list-item-card:active{background-color:#fcfcfc}
+        .list-item-card .icon-box{
+            padding:7px;
+            border-radius:9px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            box-shadow:0 1px 3px rgba(0,0,0,.05)
+        }
+        .list-item-card .icon-box i{
+            font-size:20px;
+            color:#fff
+        }
+        .list-item-card .label{
+            font-size:13px;
+            font-weight:600;
+            color:var(--text-dark);
+            flex-grow:1
+        }
+        .list-item-card .notification-count{
+            background-color:var(--danger-red);
+            color:#fff;
+            font-size:10px;
+            font-weight:600;
+            padding:2px 6px;
+            border-radius:10px;
+            min-width:16px;
+            text-align:center;
+            box-shadow:0 1px 2px rgba(231,76,60,.4);
+            display:none
+        }
+        .list-item-card .notification-count.active{display:block}
+        .list-item-card .arrow{
+            font-size:12px;
+            color:#bdc3c7;
+            transition:transform .1s ease-out
+        }
+        .list-item-card:active .arrow{transform:translateX(1px)}
+        .list-item-card.notification .icon-box{background-color:var(--purple)}
+        .list-item-card.help-desk .icon-box{background-color:var(--success-green);} /* Corrected: Changed from .customer-service to .help-desk */
+        .list-item-card.privacy .icon-box{background-color:var(--dark-purple)}
+        .list-item-card.reviews .icon-box{background-color:var(--warning-orange);} /* New: Reviews icon color */
+        .privacy-page-content h3{
+            color:var(--text-dark);
+            font-size:18px;
+            margin-top:25px;
+            margin-bottom:10px;
+            border-bottom:2px solid var(--border-light);
+            padding-bottom:5px
+        }
+        .privacy-page-content p{
+            color:var(--text-medium);
+            font-size:14px;
+            line-height:1.7;
+            margin-bottom:15px;
+            text-align:justify
+        }
+        .privacy-page-content ul{
+            list-style:disc;
+            margin-left:20px;
+            margin-bottom:15px;
+            color:var(--text-medium)
+        }
+        .privacy-page-content ul li{margin-bottom:8px}
+        .bottom-spacer{
+            height: 10px; /* Reduced spacer height */
+            flex-shrink:0
+        }
+        @media (max-width:420px){
+            .container{
+                margin:0;
+                border-radius:0;
+                box-shadow:none;
+            }
+            body{background-color:var(--card-bg)}
+            .header, .page-header {
+                padding-top:30px;
+                border-radius:0; /* Keep 0 for clip-path */
+                /* Same for mobile for consistency, ensure border-radius is applied as clip-path doesn't support it */
+                border-bottom-left-radius: 20px;
+                border-bottom-right-radius: 20px;
+            }
+            .card,.grid-cards,.logout-button-container{margin:8px;} /* action-buttons removed */
+            .grid-cards.two-columns{grid-template-columns:1fr}
+        }
+        /* Specific styles moved from inline for consistency */
+        #redeemCodeInput,
+        .review-form input[type="text"],
+        .review-form textarea {
+            width:calc(100% - 20px);
+            padding:12px 10px;
+            border:1px solid #ddd;
+            border-radius:8px;
+            font-size:15px;
+            outline:none;
+            margin-bottom:15px;
+            box-sizing: border-box; /* Ensure padding doesn't increase total width */
+        }
+        /* Fix for iOS input focus pushing fixed elements */
+        @supports (-webkit-overflow-scrolling: touch) {
+            #redeemCodeInput,
+            .review-form input[type="text"],
+            .review-form textarea {
+                /* Add a bit of bottom margin to prevent virtual keyboard overlap */
+                margin-bottom: 20px; 
+            }
+            /* Adjust the content area of pages to ensure it scrolls over the keyboard */
+            .page-content {
+                padding-bottom: 110px; /* More padding to account for keyboard and nav bar */
+            }
+            /* Main view also needs adjustment if it contains inputs */
+            #scrollable-main-view {
+                padding-bottom: 110px; /* Ensure main scrollable view clears nav bar and potentially keyboard */
+            }
+        }
+
+        #redeemCodeBtn{
+            width:100%;
+            padding:12px 15px;
+            background-color:var(--success-green);
+            color:#fff;
+            border:none;
+            border-radius:8px;
+            font-size:16px;
+            font-weight:600;
+            cursor:pointer;
+            transition:background-color .2s ease-out
+        }
+        #redeemMessage{
+            margin-top:15px;
+            text-align:center;
+            font-weight:500;
+            color:#555;
+            min-height:20px; /* Ensure space even when empty */
+        }
+        #redemptionHistoryList{
+            list-style:none;
+            padding:0;
+            margin-top: 15px;
+        }
+        .redemption-item {
+            background-color: #f8f8f8;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+        .redemption-item .code {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .redemption-item .amount {
+            color: var(--success-green);
+            font-weight: 700;
+        }
+        .redemption-item .date {
+            font-size: 10px;
+            color: var(--text-light);
+            margin-left: 10px;
+        }
+        #noRedemptionHistory,#noNotifications,#noReviews{
+            text-align:center;
+            color:#999;
+            margin-top:20px
+        }
+        /* Help Desk Page Styles */
+        .help-desk p, .help-desk h4 {margin-bottom: 8px;}
+        .help-desk a {color: var(--primary-blue); text-decoration: none;}
+        .help-desk button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px; /* Slightly larger radius for buttons */
+            cursor: pointer;
+            margin-bottom: 15px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex; /* Allow icon and text to be side-by-side */
+            align-items: center;
+            justify-content: center;
+            gap: 8px; /* Space between icon and text */
+            transition: background-color 0.2s ease;
+        }
+        .help-desk button i {
+            font-size: 18px;
+        }
+        .help-desk button.whatsapp-btn {
+            background-color: #25D366; /* WhatsApp Green */
+        }
+        .help-desk button.whatsapp-btn:hover {
+            background-color: #1DA851;
+        }
+        .help-desk button.faq-btn {
+            background-color: var(--primary-blue); /* Original secondary button color */
+        }
+        .help-desk button.faq-btn:hover {
+            background-color: var(--secondary-blue);
+        }
+        /* Notification item styling */
+        .notification-item {
+            background-color: #f8f8f8;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background-color .2s;
+        }
+        .notification-item.unseen {
+            background-color: #e6f7ff; /* Lighter blue for unseen */
+        }
+        .notification-item .message {
+            margin: 0;
+            font-weight: 400;
+            color: #333;
+        }
+        .notification-item.unseen .message {
+            font-weight: 600; /* Bold message for unseen */
+        }
+        .notification-item small {
+            color: #999;
+            font-size: 11px;
+        }
+        .notification-item .status-icon {
+            font-size: 16px;
+            margin-left: 10px;
+            color: #bbb;
+        }
+        .notification-item.unseen .status-icon {
+            color: #3498db; /* Blue icon for unseen */
+        }
+
+        /* NEW Navigation Bar Styles */
+        .nav-bar {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); /* Center the nav bar */
+            width: 100%; max-width: 400px; /* Constrain to container width */
+            background: var(--light); padding: 10px 15px;
+            display: flex; justify-content: space-around; align-items: center;
+            box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.2); z-index: 1000;
+            border-top: 2px solid rgba(0, 0, 0, 0.1); backdrop-filter: var(--glass-blur);
+        }
+        .nav-btn {
+            background: none; border: none; color: var(--dark); font-size: 12px;
+            font-weight: 600; cursor: pointer; padding: 10px;
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            transition: var(--transition); width: 60px; height: 60px; overflow: hidden;
+            text-decoration: none;
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+        .nav-btn i { font-size: 20px; transition: var(--transition); }
+        .nav-btn:hover, .nav-btn:focus { 
+          color: var(--primary); 
+          background: rgba(79, 70, 229, 0.1); /* Adjusted to new primary */
+          transform: translateY(-5px); outline: none;
+        }
+        .nav-btn.active { 
+          color: var(--primary); 
+          background: none; /* No background for active */
+          outline: none;
+          transform: translateY(0); /* Remove hover effect when active */
+        }
+        .nav-btn.active i {
+            text-shadow: 0 0 10px rgba(79, 70, 229, 0.4); /* Adjusted to new primary */
+        }
+        .nav-btn.submit-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: var(--light); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            width: 70px; height: 70px; padding: 0;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3), 0 0 20px rgba(16, 185, 129, 0.3); /* Adjusted to new primary/secondary */
+            transform: translateY(-25px); transition: var(--transition);
+            border-radius: 0; /* Important: remove previous border-radius */
+        }
+        .nav-btn.submit-btn i { font-size: 26px; text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); }
+        .nav-btn.submit-btn:hover, .nav-btn.submit-btn:focus {
+            transform: translateY(-30px) scale(1.1);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4), 0 0 30px rgba(16, 185, 129, 0.4); /* Adjusted to new primary/secondary */
+            outline: none;
+        }
+
+        /* Modal Styling (NEW) */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); z-index: 1000; align-items: center; justify-content: center;
+            transition: opacity 0.3s ease;
+            opacity: 0; /* Hidden by default for fade in */
+        }
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-content {
+            background: var(--light);
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+            box-shadow: var(--shadow);
+            animation: popIn 0.4s ease;
+            will-change: transform, opacity;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-content h3 { font-size: 20px; color: var(--primary); margin-bottom: 15px; font-weight: 700; }
+        .modal-content p { font-size: 14px; color: var(--dark); margin-bottom: 25px; line-height: 1.5; }
+
+        .modal-content .modal-close-btn {
+            background: #333;
+            color: var(--light);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .modal-content .modal-close-btn:hover,
+        .modal-content .modal-close-btn:focus {
+            transform: translateY(-2px);
+            background: #555;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            outline: none;
+        }
+
+        /* Review Page Styles */
+        .review-form {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+            margin-bottom: 20px;
+        }
+        .review-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        .review-form input[type="text"],
+        .review-form textarea {
+            width: calc(100% - 20px);
+            padding: 12px 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            margin-bottom: 15px;
+            box-sizing: border-box; /* Ensures padding doesn't increase total width */
+            resize: vertical; /* Allow vertical resizing for textarea */
+            min-height: 80px; /* Minimum height for textarea */
+        }
+        .review-form button {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--primary-blue); /* Consistent with other action buttons */
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color .2s ease-out;
+        }
+        .review-form button:hover {
+            background-color: var(--secondary-blue);
+        }
+        .review-message {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 500;
+            color: #555;
+            min-height: 20px;
+        }
+
+        .review-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        .review-item {
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #eee;
+        }
+        .review-item .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .review-item .reviewer-name {
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 15px;
+        }
+        .review-item .review-date {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .review-item .review-text {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.5;
+            margin-top: 5px;
+        }
+        /* New: Review Like System */
+        .review-item .review-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: var(--text-light);
+        }
+        .review-item .like-button {
+            cursor: pointer;
+            color: var(--text-light);
+            transition: color 0.2s ease-in-out;
+        }
+        .review-item .like-button.liked i {
+            color: var(--danger-red);
+        }
+        .review-item .like-button i {
+            font-size: 16px;
+        }
+        .review-item .like-count {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+          .nav-bar { padding: 8px 10px; } .nav-btn { font-size: 11px; padding: 8px; width: 55px; height: 55px; }
+          .nav-btn i { font-size: 18px; } .nav-btn.submit-btn { width: 60px; height: 60px; transform: translateY(-12px); }
+          .nav-btn.submit-btn i { font-size: 22px; }
+
+          /* Modal Specifics for Mobile */
+          .modal-content { padding: 20px; max-width: 300px; }
+          .modal-content h3 { font-size: 18px; margin-bottom: 12px; }
+          .modal-content p { font-size: 13px; margin-bottom: 20px; }
+          .modal-content .modal-close-btn { padding: 10px 20px; font-size: 13px; }
+
+          /* Review Page Specifics for Mobile */
+          .review-form input[type="text"], .review-form textarea {
+            font-size: 14px;
+            padding: 10px;
+          }
+          .review-form button {
+            font-size: 15px;
+            padding: 10px;
+          }
+          .review-item {
+            padding: 12px;
+          }
+          .review-item .reviewer-name {
+            font-size: 14px;
+          }
+          .review-item .review-text {
+            font-size: 13px;
+          }
+        }
+        @media (max-width: 375px) {
+            .nav-btn { width: 50px; height: 50px; font-size: 10px; } .nav-btn i { font-size: 16px; }
+            .nav-btn.submit-btn { width: 55px; height: 55px; transform: translateY(-10px); }
+            .nav-btn.submit-btn i { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav style="background:#222; padding:10px;">
+  <ul style="list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap;">
+    <li style="margin:0 10px;"><a href="index.html" style="color:white; text-decoration:none;">Home</a></li>
+    <li style="margin:0 10px;"><a href="account.html" style="color:white; text-decoration:none;">Account</a></li>
+    <li style="margin:0 10px;"><a href="wallet.html" style="color:white; text-decoration:none;">Wallet</a></li>
+    <li style="margin:0 10px;"><a href="smm.html" style="color:white; text-decoration:none;">SMM</a></li>
+    <li style="margin:0 10px;"><a href="gmail.html" style="color:white; text-decoration:none;">Gmail</a></li>
+    <li style="margin:0 10px;"><a href="tiktop.html" style="color:white; text-decoration:none;">TikTok</a></li>
+    <li style="margin:0 10px;"><a href="getlike.html" style="color:white; text-decoration:none;">GetLike</a></li>
+    <li style="margin:0 10px;"><a href="center.html" style="color:white; text-decoration:none;">Center</a></li>
+  </ul>
+</nav>
+
+    <div class="container">
+        <div id="scrollable-main-view"> 
+            <div class="header">
+                <div class="profile-pic-container">
+                    <div class="profile-pic" id="profilePic"></div>
+                    <input type="file" id="profilePicInput" accept="image/*" style="display:none">
+                    <div class="edit-profile-icon" id="editProfilePicBtn" title="Change Profile Picture">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+                <div class="user-info">
+                    <div class="name-vip">
+                        <div class="name-edit-wrapper">
+                            <span class="name" id="userName">MEMBERNNG5UXP7</span>
+                            <i class="fas fa-pencil-alt name-edit-icon" id="editNameBtn" title="Edit Name"></i>
+                        </div>
+                    </div>
+                    <div class="uid-text">
+                        UID | <span id="userUid"></span> <i class="fas fa-copy" id="copyUidBtn" title="Copy UID"></i><span class="copy-feedback" id="uidCopyFeedback">Copied!</span>
+                    </div>
+                </div>
+            </div>
+
+            <div> 
+                <div class="grid-cards two-columns">
+                    <div class="card grid-card transaction" data-coming-soon="Transaction">
+                        <div class="icon-box"><i class="fas fa-file-invoice"></i></div>
+                        <div class="title">Transaction</div>
+                        <div class="subtitle">My transaction history</div>
+                    </div>
+                    <div class="card grid-card redeem-code" data-page="redeem-code-page">
+                        <div class="icon-box"><i class="fas fa-gift"></i></div>
+                        <div class="title">Redeem Code</div>
+                        <div class="subtitle">Enter your gift code</div>
+                    </div>
+                </div>
+                <div class="card list-item-card notification" data-page="notification-page">
+                    <div class="icon-box"><i class="fas fa-bell"></i></div>
+                    <div class="label">Notification</div>
+                    <span class="notification-count" id="notificationCount">0</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+
+                <div class="card list-item-card help-desk" data-page="help-desk-page">
+                    <div class="icon-box"><i class="fas fa-headset"></i></div>
+                    <div class="label">Help Desk</div>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+
+                <div class="card list-item-card privacy" data-page="privacy-page">
+                    <div class="icon-box"><i class="fas fa-user-shield"></i></div>
+                    <div class="label">Privacy Policy</div>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+
+                <div class="card list-item-card reviews" data-page="reviews-page">
+                    <div class="icon-box"><i class="fas fa-star"></i></div>
+                    <div class="label">User Reviews</div>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+
+                <div class="bottom-spacer"></div>
+            </div>
+        </div>
+
+        <div id="privacy-page" class="page">
+            <div class="page-header">
+                <i class="fas fa-arrow-left back-btn"></i>
+                <span class="page-title">Privacy Policy</span>
+            </div>
+            <div class="page-content privacy-page-content">
+                <h3>1. Introduction to Earnovate's Privacy Policy</h3>
+                <p>Welcome to Earnovate! We are committed to protecting your privacy and ensuring a secure experience as you engage with our earning, income generation, team building, referral, and leadership programs. This Privacy Policy outlines how Earnovate ("we," "our," or "us") collects, uses, stores, and safeguards your personal data when you use our mobile application and related services. By accessing or using our services, you signify your agreement to the terms detailed in this policy.</p>
+                <p>Earnovate is the data controller responsible for your personal data. For any privacy-related inquiries, please contact us at <a href="mailto:onlineearneleven@gmail.com">onlineearneleven@gmail.com</a>.</p>
+
+                <h3>2. Information We Collect and Its Purpose</h3>
+                <p>We collect various types of information to facilitate your participation in our programs, improve our services, and ensure security:</p>
+                <ul>
+                    <li><strong>Account & Profile Information:</strong> This includes your username, profile picture (if you choose to upload one), and a unique User ID (UID). This data is essential for managing your account, personalizing your experience, and identifying you within our system.</li>
+                    <li><strong>Earning & Transaction Data:</strong> Details of your income, deposits, withdrawals, bonus accumulations, and other financial activities within the app are collected. This data is critical for tracking your earnings, processing transactions, and maintaining accurate financial records.</li>
+                    <li><strong>Team Building & Referral Information:</strong> If you participate in our team building or referral programs, we collect information related to your referrals, the performance of your team, and associated rewards. This helps us calculate commissions and manage the network effectively.</li>
+                    <li><strong>Interaction Data:</strong> We track how you interact with our features, such as redeemed codes, notifications viewed, customer service inquiries, and engagement with learning materials or leadership resources. This helps us understand user behavior and refine our offerings.</li>
+                    <li><strong>Device Information:</strong> Technical data from your device, such as your IP address, device type, operating system, and unique device identifiers, is collected. This information is used for security purposes (e.g., preventing fraud), app optimization, and general analytics to improve service delivery.</li>
+                </ul>
+
+                <h3>3. How We Utilize Your Information</h3>
+                <p>Your collected information is used for the following key purposes:</p>
+                <ul>
+                    <li>To operate, maintain, and deliver all features of our earning and referral services.</li>
+                    <li>To accurately process your earnings, transactions, deposits, and withdrawals.</li>
+                    <li>To personalize your app experience, including displaying your profile, relevant earning opportunities, and team performance metrics.</li>
+                    <li>To administer and manage our team building, referral, and leadership programs, ensuring proper reward distribution.</li>
+                    <li>To improve our application's functionality, user experience, and the effectiveness of our earning models.</li>
+                    <li>To provide comprehensive customer support and promptly respond to your inquiries and feedback.</li>
+                    <li>To monitor, detect, prevent, and address technical issues, security breaches, or fraudulent activities.</li>
+                    <li>To comply with all applicable legal obligations, regulatory requirements, and to enforce our terms of service and acceptable use policies.</li>
+                </ul>
+
+                <h3>4. Data Sharing and Disclosure</h3>
+                <p>We do not sell, trade, or rent your personally identifiable information to outside parties for their marketing purposes without your explicit consent. We may share your data in the following limited circumstances:</p>
+                <ul>
+                    <li><strong>Service Providers:</strong> We may share data with trusted third-party service providers who assist us in operating our app and delivering our services (e.g., payment processors, cloud hosting, analytics providers). These providers are contractually obligated to keep your information confidential and use it only for the purposes for which we disclose it to them.</li>
+                    <li><strong>Team/Network Visibility:</strong> For the purpose of team building and referral programs, certain aggregated or anonymized data related to team performance or referral success might be visible to other members within your network to foster transparency and motivation. However, direct personal identifiers will be protected.</li>
+                    <li><strong>Legal Requirements & Safety:</strong> We may disclose your information if required to do so by law, court order, or in response to valid requests by public authorities (e.g., law enforcement). We may also disclose information to protect our rights, property, or safety, and the safety of our users or the public.</li>
+                    <li><strong>Business Transfers:</strong> In the event of a merger, acquisition, restructuring, or sale of all or a portion of our assets, your personal data may be transferred as part of that transaction, subject to appropriate confidentiality agreements.</li>
+                </ul>
+
+                <h3>5. Data Security Measures</h3>
+                <p>At Earnovate, safeguarding your data is a top priority. We implement robust security measures, including:</p>
+                <ul>
+                    <li><strong>Encryption:</strong> Data is encrypted both in transit (using SSL/TLS) and at rest where appropriate, to protect against unauthorized access.</li>
+                    <li><strong>Access Controls:</strong> Strict internal access controls ensure that only authorized personnel have access to your personal data, and only for legitimate business purposes.</li>
+                    <li><strong>Regular Audits & Updates:</strong> We regularly review our security practices and update our systems to guard against new threats and vulnerabilities.</li>
+                </ul>
+                <p>While we strive to use commercially acceptable means to protect your Personal Data, no method of transmission over the Internet or method of electronic storage is 100% secure. Therefore, we cannot guarantee its absolute security.</p>
+
+                <h3>6. Your Privacy Rights</h3>
+                <p>Depending on your jurisdiction and applicable data protection laws, you may have the following rights concerning your personal data:</p>
+                <ul>
+                    <li><strong>Right to Access:</strong> You can request a copy of the personal data we hold about you.</li>
+                    <li><strong>Right to Rectification:</strong> You can request the correction of inaccurate or incomplete data we hold about you.</li>
+                    <li><strong>Right to Erasure ("Right to be Forgotten"):</strong> You can request the deletion of your personal data under certain conditions.</li>
+                    <li><strong>Right to Object/Restrict Processing:</strong> You have the right to object to or request restriction of the processing of your data under certain conditions.</li>
+                    <li><strong>Right to Data Portability:</strong> You can request to receive your personal data in a structured, commonly used, and machine-readable format.</li>
+                </ul>
+                <p>To exercise any of these rights, please contact our customer service team at the details provided below. We will respond to your request in accordance with applicable laws.</p>
+
+                <h3>7. Changes to This Privacy Policy</h3>
+                <p>We may update this Privacy Policy periodically to reflect changes in our practices or legal requirements. We will notify you of any significant changes by posting the new Privacy Policy on this page and updating the "Last Updated" date at the top. You are advised to review this Privacy Policy periodically for any changes. Your continued use of our services after any modifications signifies your acceptance of the updated policy.</p>
+
+                <h3>8. Contact Us</h3>
+                <p>If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please do not hesitate to contact us:</p>
+                <p>Email: <a href="mailto:onlineearneleven@gmail.com">onlineearneleven@gmail.com</a></p>
+                <p style="text-align:center;font-size:11px;color:#aaa">*This Privacy Policy is a general template and should be adapted for legal compliance.*</p>
+                <p style="text-align:center;font-size:11px;color:#777">&copy; 2025 Earnovate. All rights reserved.</p> </div>
+        </div>
+
+        <div id="help-desk-page" class="page">
+            <div class="page-header">
+                <i class="fas fa-arrow-left back-btn"></i>
+                <span class="page-title">Help Desk</span>
+            </div>
+            <div class="page-content help-desk">
+                <h3>How Can We Help You?</h3>
+                <p>Our help desk team is available 24/7 to assist you. Please choose from the options below:</p>
+                <h4>Whatsapp Chat</h4>
+                <p>Connect with a support agent instantly for real-time assistance.</p>
+                <a href="https://wa.me/+8801886313023" target="_blank">
+                    <button class="whatsapp-btn">
+                        <i class="fab fa-whatsapp"></i> Start Whatsapp Chat
+                    </button>
+                </a>
+                <h4>FAQ (Frequently Asked Questions)</h4>
+                <button class="faq-btn" data-coming-soon="FAQs">Browse FAQs</button>
+                <h4>Email Support</h4>
+                <p>For detailed inquiries, you can send us an email. We aim to respond within 24 hours.</p>
+                <p>Email: <a href="mailto:onlineearneleven@gmail.com">onlineearneleven@gmail.com</a></p>
+            </div>
+        </div>
+
+        <div id="redeem-code-page" class="page">
+            <div class="page-header">
+                <i class="fas fa-arrow-left back-btn"></i>
+                <span class="page-title">Redeem Code</span>
+            </div>
+            <div class="page-content">
+                <h3>Enter Your Redeem Code</h3>
+                <p>Have a special gift code? Enter it below to redeem your bonus or reward!</p>
+                <div style="background-color:var(--card-bg);padding:20px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:20px">
+                    <label for="redeemCodeInput" style="display:block;margin-bottom:8px;font-weight:600;color:#333">Redeem Code:</label>
+                    <input type="text" id="redeemCodeInput" placeholder="e.g., GIFT2025PROMO">
+                    <button id="redeemCodeBtn">Redeem Now</button>
+                </div>
+                <div id="redeemMessage"></div>
+
+                <h3 style="margin-top:30px">Redemption History</h3>
+                <p style="font-size:12px;color:#888">Keep track of codes you've successfully redeemed.</p>
+                <ul id="redemptionHistoryList">
+                </ul>
+                <p id="noRedemptionHistory">No redemption history available.</p>
+            </div>
+        </div>
+
+        <div id="notification-page" class="page">
+            <div class="page-header">
+                <i class="fas fa-arrow-left back-btn"></i>
+                <span class="page-title">Notifications</span>
+            </div>
+            <div class="page-content">
+                <div id="notificationList">
+                    <p id="noNotifications">You have no new notifications.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="reviews-page" class="page">
+            <div class="page-header">
+                <i class="fas fa-arrow-left back-btn"></i>
+                <span class="page-title">User Reviews</span>
+            </div>
+            <div class="page-content">
+                <h3>Share Your Experience!</h3>
+                <p>We value your feedback. Let us know how Earnovate has helped you!</p>
+                <div class="review-form">
+                    <label for="reviewTextInput">Your Review:</label>
+                    <textarea id="reviewTextInput" placeholder="Write your honest review here..."></textarea>
+                    
+                    <button id="submitReviewBtn">Submit Review</button>
+                    <div class="review-message" id="reviewSubmissionMessage"></div>
+                </div>
+
+                <h3 style="margin-top:30px;">What Our Users Say</h3>
+                <p style="font-size:12px;color:#888;">Hear from our successful users.</p>
+                <ul id="reviewList" class="review-list">
+                    </ul>
+                <p id="noReviews">No reviews yet. Be the first to share your experience!</p>
+            </div>
+        </div>
+
+
+    </div>
+    
+    <div class="nav-bar">
+      <a href="index.html" class="nav-btn" aria-label="Home" data-nav-page="home">
+        <i class="fas fa-home"></i><span>Home</span>
+      </a>
+      <a href="#" class="nav-btn" aria-label="Agency" data-nav-page="agency">
+        <i class="fas fa-building"></i><span>Agency</span>
+      </a>
+      <a href="center.html" class="nav-btn submit-btn" aria-label="Submit Task" data-nav-page="submit">
+        <i class="fas fa-rocket"></i>
+      </a>
+      <a href="#" class="nav-btn" aria-label="Wallet" data-nav-page="wallet">
+        <i class="fas fa-wallet"></i><span>Wallet</span>
+      </a>
+      <a href="account.html" class="nav-btn active" aria-label="Account" data-nav-page="account">
+        <i class="fas fa-user"></i><span>Account</span>
+      </a>
+    </div>
+
+    <div class="modal" id="coming-soon-modal">
+        <div class="modal-content">
+            <h3>Coming Soon!</h3>
+            <p>This feature is currently under development. Please check back later!</p>
+            <button id="close-coming-soon-modal" class="modal-close-btn">Got It!</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const els = {
+                mainC: document.getElementById('scrollable-main-view'),
+                profilePic: document.getElementById('profilePic'),
+                profilePicInput: document.getElementById('profilePicInput'),
+                editProfilePicBtn: document.getElementById('editProfilePicBtn'),
+                userName: document.getElementById('userName'),
+                editNameBtn: document.getElementById('editNameBtn'),
+                userUidEl: document.getElementById('userUid'),
+                copyUidBtn: document.getElementById('copyUidBtn'),
+                uidCopyFeedback: document.getElementById('uidCopyFeedback'),
+                redeemCodeInput: document.getElementById('redeemCodeInput'),
+                redeemCodeBtn: document.getElementById('redeemCodeBtn'),
+                redeemMsg: document.getElementById('redeemMessage'),
+                redemptionHistList: document.getElementById('redemptionHistoryList'),
+                noRedemptionHistMsg: document.getElementById('noRedemptionHistory'),
+                notificationCountEl: document.getElementById('notificationCount'),
+                notificationList: document.getElementById('notificationList'),
+                noNotificationsMsg: document.getElementById('noNotifications'),
+                pages: document.querySelectorAll('.page'),
+                navTriggers: document.querySelectorAll('[data-page]'),
+                backBtns: document.querySelectorAll('.back-btn'),
+                navBtns: document.querySelectorAll('.nav-btn'),
+                comingSoonModal: document.getElementById('coming-soon-modal'),
+                closeComingSoonModalBtn: document.getElementById('close-coming-soon-modal'),
+                reviewTextInput: document.getElementById('reviewTextInput'),
+                submitReviewBtn: document.getElementById('submitReviewBtn'),
+                reviewSubmissionMessage: document.getElementById('reviewSubmissionMessage'),
+                reviewList: document.getElementById('reviewList'),
+                noReviewsMsg: document.getElementById('noReviews')
+            };
+
+            // Key for localStorage
+            const APP_DATA_KEY = 'earnovateAppData';
+
+            // Define valid redeem codes and their base amounts
+            const VALID_REDEEM_CODES = {
+                'EUCHDH2827': 0, // Amount will be randomized between 10-99
+                'SHSH282727': 0,
+                'EUE5EN2827': 0,
+                'OD2K2938D': 0,
+                'IEDH922988': 0,
+                'WOJSND299': 0,
+                '2029DKD9D': 0,
+                'PLAS29JS29': 0,
+                'PSK28XINS0': 0
+            };
+
+            // Default app data structure
+            let appData = {
+                balance: 0,
+                notifications: [
+                    { id: 1, message: "Welcome to Earnovate! We are excited to have you.", date: "2025-06-19 10:00 AM", seen: false, type: "admin" },
+                    { id: 2, message: "Our new VIP program has launched! Check your benefits.", date: "2025-06-18 03:30 PM", seen: false, type: "admin" },
+                    { id: 3, message: "System maintenance scheduled for 2 AM tomorrow. Services may be briefly interrupted.", date: "2025-06-17 08:00 PM", seen: true, type: "admin" }
+                ],
+                redemptions: [], // Stores { code: 'CODE', amount: 50, date: 'YYYY-MM-DD' }
+                redeemedCodes: {}, // Stores { 'CODE': true } to track used codes
+                profilePicUrl: null,
+                userNameVal: "MEMBERNNG5UXP7",
+                userUid: '',
+                reviews: [
+                    { id: 1, name: 'Rahim Khan', date: '2025-07-01', text: 'আলহামদুলিল্লাহ, এই প্রথম অ্যাড ফি ছাড়া একটি ইনকাম সাইট খুজে পেয়েছি 😊', likes: 120, liked: false, autoLikeScheduled: false, autoLikeCount: 0, maxAutoLikes: 0 },
+                    { id: 2, name: 'Sumi Akter', date: '2025-06-28', text: 'তারা ভালো ইনকামের সাপোর্ট দিচ্ছে এবং রেফারের সুবিধা অনেক 💞', likes: 80, liked: false, autoLikeScheduled: false, autoLikeCount: 0, maxAutoLikes: 0 },
+                    { id: 3, name: 'Arif Islam', date: '2025-06-25', text: 'আপনাদেরকে ধন্যবাদ এই প্রথম ফ্রী রেফার টিম বানিয়ে মাসে ৪০০০+ ইনকাম হয়েছে।', likes: 110, liked: false, autoLikeScheduled: false, autoLikeCount: 0, maxAutoLikes: 0 },
+                    { id: 4, name: 'Fahmida Yesmin', date: '2025-06-20', text: 'কখনো ভাবতেও পারিনি আমার দ্বারা অনলাইন থেকে ইনকাম হবে, আলহামদুলিল্লাহ এখন নিজের ছোটখাটো শখ পূরণ করতে পারছি 🫶', likes: 60, liked: false, autoLikeScheduled: false, autoLikeCount: 0, maxAutoLikes: 0 },
+                    { id: 5, name: 'Javed Hossain', date: '2025-06-18', text: 'শুরুতে ভেবেছিলাম আমার দাঁড়া রেফার করা সম্ভব নয়। এরপর ভাইয়াদের সাপোর্টে ও আমার চেষ্টায় মোটামুটি এখন আমার টিমে 70+ মেম্বার রয়েছে।', likes: 95, liked: false, autoLikeScheduled: false, autoLikeCount: 0, maxAutoLikes: 0 },
+                    { id: 6, name: 'Nusrat Jahan', date: '2025-06-15', text: 'এখানের বাকি কাজগুলো থেকেও নিজের রেফার টিম বানিয়ে অনেক ইনকাম করা যায় 🙃', likes: 55, liked: false, autoLikeScheduled: false, autoLikeCount: 0, maxAutoLikes: 0 },
+                    { id: 7, name: 'Kamal Ahmed', date: '2025-06-12', text: 'এখানে সবচাইতে ভালো লেগেছে যে তারা কোন ধরনের অ্যাড ফি না নিয়ে এত সাপোর্ট দিচ্ছে ☺️🫶', likes: 105, liked: false, autoLikeScheduled: false, autoLikeCount: 0, maxAutoLikes: 0 },
+                    { id: 8, name: 'Taslima Begum', date: '2025-06-10', text: 'Really nice site', likes: 45, liked: false, autoLikeScheduled: false, autoLikeCount: 0, maxAutoLikes: 0 },
+                    { id: 9, name: 'Shourav Khan', date: '2025-06-08', text: 'sob chaite beshi income hocche tiktop thake', likes: 85, liked: false, autoLikeScheduled: false, autoLikeCount: 0, maxAutoLikes: 0 },
+                    { id: 10, name: 'Mariam Islam', date: '2025-06-05', text: 'amar team members ekhon 40+, refar bonus e 6000+ payeci 🥲💓', likes: 35, liked: false, autoLikeScheduled: false, autoLikeCount: 0, maxAutoLikes: 0 },
+                    { id: 11, name: 'Sajid Mahmud', date: '2025-06-02', text: 'এখানের গেট লাইট, টিকটপ বেস্ট সাইট', likes: 75, liked: false, autoLikeScheduled: false, autoLikeCount: 0, maxAutoLikes: 0 },
+                    { id: 12, name: 'Rina Begum', date: '2025-05-30', text: 'Over all good 👍', likes: 25, liked: false, autoLikeScheduled: false, autoLikeCount: 0, maxAutoLikes: 0 }
+                ],
+                lastReviewId: 12 // To ensure unique IDs for new reviews
+            };
+
+            // Save app data to localStorage
+            const saveAppData = () => {
+                localStorage.setItem(APP_DATA_KEY, JSON.stringify(appData));
+            };
+
+            // Load app data from localStorage
+            const loadAppData = () => {
+                const storedData = localStorage.getItem(APP_DATA_KEY);
+                if (storedData) {
+                    const parsedData = JSON.parse(storedData);
+                    // Merge stored data with default, ensuring default values for new properties
+                    appData = { ...appData, ...parsedData };
+
+                    // Ensure arrays/objects are initialized if not present in stored data
+                    if (!Array.isArray(appData.notifications)) {
+                        appData.notifications = [];
+                    }
+                    if (!Array.isArray(appData.redemptions)) {
+                        appData.redemptions = [];
+                    }
+                    if (typeof appData.redeemedCodes !== 'object' || appData.redeemedCodes === null) {
+                        appData.redeemedCodes = {};
+                    }
+                    if (!Array.isArray(appData.reviews)) {
+                        appData.reviews = []; 
+                    } else {
+                        // Ensure autoLike properties are initialized for existing reviews loaded from storage
+                        appData.reviews.forEach(review => {
+                            if (typeof review.autoLikeScheduled === 'undefined') review.autoLikeScheduled = false;
+                            if (typeof review.autoLikeCount === 'undefined') review.autoLikeCount = 0;
+                            if (typeof review.maxAutoLikes === 'undefined') review.maxAutoLikes = 0;
+                        });
+                    }
+                    
+                    // Update lastReviewId based on existing reviews, or set to initial if empty
+                    appData.lastReviewId = appData.reviews.reduce((maxId, review) => Math.max(maxId, review.id), 0);
+
+                    // If UID was not stored, generate it now and save
+                    if (!appData.userUid) {
+                        appData.userUid = generateUid();
+                        saveAppData();
+                    }
+                } else {
+                    // First time load, no data in localStorage, generate initial UID and set default reviews
+                    appData.userUid = generateUid();
+                    // Default reviews already set above
+                    saveAppData();
+                }
+            };
+
+            const generateUid = () => {
+                return String(Math.floor(10000000 + Math.random() * 90000000));
+            };
+
+            const setProfilePic = () => {
+                if (appData.profilePicUrl) {
+                    let imgEl = els.profilePic.querySelector('img');
+                    if (!imgEl) {
+                        imgEl = document.createElement('img');
+                        els.profilePic.innerHTML = '';
+                        els.profilePic.appendChild(imgEl);
+                    }
+                    imgEl.src = appData.profilePicUrl;
+                    imgEl.alt = "Profile Picture";
+                    els.profilePic.classList.remove('default-avatar');
+                } else {
+                    const existingImg = els.profilePic.querySelector('img');
+                    if (existingImg) { els.profilePic.removeChild(existingImg) }
+                    els.profilePic.textContent = appData.userNameVal.charAt(0).toUpperCase();
+                    els.profilePic.classList.add('default-avatar');
+                }
+            };
+
+            const handleProfilePicChange = (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        appData.profilePicUrl = e.target.result;
+                        setProfilePic();
+                        saveAppData();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const handleNameEdit = () => {
+                const currentName = appData.userNameVal;
+                const nameEditWrapper = els.userName.closest('.name-edit-wrapper');
+                if (!nameEditWrapper) return;
+
+                const inputField = document.createElement('input');
+                inputField.type = 'text';
+                inputField.value = currentName;
+                inputField.classList.add('name-input');
+                inputField.maxLength = 20;
+
+                // Temporarily hide the original span and icon, append input
+                els.userName.style.display = 'none';
+                els.editNameBtn.style.display = 'none';
+                nameEditWrapper.prepend(inputField); // Prepend so it appears before the icon
+
+                inputField.focus();
+
+                const saveName = () => {
+                    const newName = inputField.value.trim();
+                    if (newName === '') {
+                        alert('Name cannot be empty!'); // Consider a non-blocking UI feedback here too
+                        inputField.focus();
+                        return;
+                    }
+                    appData.userNameVal = newName;
+                    els.userName.textContent = appData.userNameVal;
+
+                    // Remove input, show original span and icon
+                    inputField.remove();
+                    els.userName.style.display = '';
+                    els.editNameBtn.style.display = '';
+
+                    setProfilePic(); // Update profile pic initial letter if no image
+                    saveAppData(); // Save after name update
+                };
+
+                let isSaving = false;
+                inputField.addEventListener('keypress', e => {
+                    if (e.key === 'Enter' && !isSaving) {
+                        isSaving = true;
+                        saveName();
+                    }
+                });
+                inputField.addEventListener('blur', () => {
+                    if (!isSaving) { 
+                        saveName();
+                    }
+                });
+            };
+
+            const handleCopyUid = async () => {
+                if (!appData.userUid) {
+                    console.error('UID not available to copy.');
+                    return;
+                }
+
+                try {
+                    await navigator.clipboard.writeText(appData.userUid);
+                    // Show "Copied!" feedback
+                    els.uidCopyFeedback.classList.add('show');
+                    setTimeout(() => {
+                        els.uidCopyFeedback.classList.remove('show');
+                    }, 2000); // Hide after 2 seconds
+                } catch (err) {
+                    console.error('Failed to copy UID:', err);
+                    // Fallback for older browsers or specific environments
+                    const textarea = document.createElement('textarea');
+                    textarea.value = appData.userUid;
+                    textarea.style.position = 'fixed';
+                    textarea.style.top = '0';
+                    textarea.style.left = '0';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    textarea.select();
+                    try {
+                        document.execCommand('copy');
+                        els.uidCopyFeedback.classList.add('show');
+                        setTimeout(() => {
+                            els.uidCopyFeedback.classList.remove('show');
+                        }, 2000);
+                    } catch (err2) {
+                        console.error('Failed to copy UID using fallback:', err2);
+                        alert('Failed to copy UID. Please try again or manually copy: ' + appData.userUid);
+                    } finally {
+                        document.body.removeChild(textarea);
+                    }
+                }
+            };
+
+            const handleRedeemCode = () => {
+                const code = els.redeemCodeInput.value.trim().toUpperCase(); // Convert to uppercase for consistent matching
+                if (!code) {
+                    els.redeemMsg.style.color = 'var(--warning-orange)';
+                    els.redeemMsg.textContent = 'Please enter a redeem code.';
+                    return;
+                }
+
+                // Check if code is valid
+                if (!(code in VALID_REDEEM_CODES)) {
+                    els.redeemMsg.style.color = 'var(--danger-red)';
+                    els.redeemMsg.textContent = 'Invalid or expired code. Please try again.';
+                    return;
+                }
+
+                // Check if code has already been redeemed by the user
+                if (appData.redeemedCodes[code]) {
+                    els.redeemMsg.style.color = 'var(--warning-orange)';
+                    els.redeemMsg.textContent = `Code "${code}" has already been used.`;
+                    return;
+                }
+
+                els.redeemMsg.style.color = '#333';
+                els.redeemMsg.textContent = 'Processing...';
+
+                setTimeout(() => {
+                    const today = new Date().toISOString().slice(0, 10);
+                    const redeemedAmount = Math.floor(Math.random() * 90) + 10; // Random amount between 10 and 99
+
+                    appData.balance += redeemedAmount;
+                    els.redeemMsg.style.color = 'var(--success-green)';
+                    els.redeemMsg.textContent = `🥳 Code "${code}" redeemed successfully! You received ৳${redeemedAmount.toFixed(2)}.`;
+                    
+                    appData.redemptions.unshift({ code: code, amount: redeemedAmount, date: today });
+                    appData.redeemedCodes[code] = true; // Mark code as used
+
+                    updateRedemptionHistoryDisplay();
+                    els.redeemCodeInput.value = '';
+                    saveAppData();
+                }, 1500);
+            };
+
+            // Show Coming Soon Modal
+            const showComingSoonModal = () => {
+                els.comingSoonModal.classList.add('active');
+            };
+
+            const updateNotificationDisplay = () => {
+                els.notificationList.innerHTML = ''; 
+                const unseenNotifications = appData.notifications.filter(n => !n.seen);
+                els.notificationCountEl.textContent = unseenNotifications.length;
+                if (unseenNotifications.length > 0) {
+                    els.notificationCountEl.classList.add('active');
+                } else {
+                    els.notificationCountEl.classList.remove('active');
+                }
+
+                if (appData.notifications.length === 0) {
+                    els.noNotificationsMsg.style.display = 'block';
+                } else {
+                    els.noNotificationsMsg.style.display = 'none';
+                    appData.notifications.forEach(notification => {
+                        const notificationItem = document.createElement('div');
+                        notificationItem.classList.add('notification-item');
+                        if (!notification.seen) {
+                            notificationItem.classList.add('unseen');
+                        }
+                        notificationItem.dataset.id = notification.id; 
+
+                        notificationItem.innerHTML = `
+                            <div>
+                                <p class="message">${notification.message}</p>
+                                <small>${notification.date}</small>
+                            </div>
+                            <i class="fas ${notification.seen ? 'fa-check-circle' : 'fa-circle'} status-icon"></i>
+                        `;
+                        els.notificationList.appendChild(notificationItem);
+
+                        notificationItem.addEventListener('click', () => {
+                            if (!notification.seen) {
+                                notification.seen = true;
+                                saveAppData();
+                                updateNotificationDisplay(); 
+                            }
+                        });
+                    });
+                }
+            };
+
+            const updateRedemptionHistoryDisplay = () => {
+                els.redemptionHistList.innerHTML = '';
+                if (appData.redemptions.length === 0) {
+                    els.noRedemptionHistMsg.style.display = 'block';
+                } else {
+                    els.noRedemptionHistMsg.style.display = 'none';
+                    appData.redemptions.forEach(redemption => {
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('redemption-item');
+                        listItem.innerHTML = `
+                            <span class="code">${redemption.code}</span>
+                            <span class="amount">৳${redemption.amount.toFixed(2)}</span>
+                            <span class="date">${redemption.date}</span>
+                        `;
+                        els.redemptionHistList.appendChild(listItem);
+                    });
+                }
+            };
+
+            // New: Review System Functions
+            const displayReviews = () => {
+                els.reviewList.innerHTML = '';
+                if (appData.reviews.length === 0) {
+                    els.noReviewsMsg.style.display = 'block';
+                } else {
+                    els.noReviewsMsg.style.display = 'none';
+                    // Display reviews from newest to oldest
+                    [...appData.reviews].reverse().forEach(review => {
+                        const reviewItem = document.createElement('li');
+                        reviewItem.classList.add('review-item');
+                        reviewItem.dataset.reviewId = review.id; // Store review ID
+
+                        const likeIconClass = review.liked ? 'fas fa-heart' : 'far fa-heart';
+                        reviewItem.innerHTML = `
+                            <div class="review-header">
+                                <span class="reviewer-name">${review.name}</span>
+                                <span class="review-date">${review.date}</span>
+                            </div>
+                            <p class="review-text">${review.text}</p>
+                            <div class="review-actions">
+                                <span class="like-button ${review.liked ? 'liked' : ''}" data-review-id="${review.id}">
+                                    <i class="${likeIconClass}"></i>
+                                </span>
+                                <span class="like-count">${review.likes}</span> likes
+                            </div>
+                        `;
+                        els.reviewList.appendChild(reviewItem);
+
+                        // Add event listener for the like button
+                        const likeButton = reviewItem.querySelector('.like-button');
+                        if (likeButton) {
+                            likeButton.addEventListener('click', () => toggleLike(review.id));
+                        }
+                    });
+                }
+            };
+
+            const toggleLike = (reviewId) => {
+                const reviewIndex = appData.reviews.findIndex(r => r.id === reviewId);
+                if (reviewIndex > -1) {
+                    const review = appData.reviews[reviewIndex];
+                    if (review.liked) {
+                        review.likes--;
+                        review.liked = false;
+                    } else {
+                        review.likes++;
+                        review.liked = true;
+                    }
+                    saveAppData();
+                    displayReviews(); // Re-render to show updated likes and icon
+                }
+            };
+
+            const addAutoLike = (reviewId) => {
+                const reviewIndex = appData.reviews.findIndex(r => r.id === reviewId);
+                if (reviewIndex > -1) {
+                    const review = appData.reviews[reviewIndex];
+                    
+                    // Only add like if it hasn't reached max auto-likes and autoLikeTime is set
+                    if (review.autoLikeCount < review.maxAutoLikes) {
+                        review.likes++;
+                        review.autoLikeCount++;
+                        saveAppData();
+                        console.log(`Auto-liked review ID ${reviewId}. Total auto-likes: ${review.autoLikeCount}`);
+                        // Only re-display if the reviews page is currently active
+                        if (document.getElementById('reviews-page').classList.contains('active')) {
+                            displayReviews();
+                        }
+                        // Schedule the next auto-like
+                        if (review.autoLikeCount < review.maxAutoLikes) {
+                            setTimeout(() => addAutoLike(reviewId), 60 * 60 * 1000); // 1 hour later
+                        }
+                    }
+                }
+            };
+
+            const scheduleAutoLikes = (reviewId) => {
+                const reviewIndex = appData.reviews.findIndex(r => r.id === reviewId);
+                if (reviewIndex > -1) {
+                    const review = appData.reviews[reviewIndex];
+                    if (!review.autoLikeScheduled) { // Only schedule if not already scheduled
+                        review.autoLikeCount = 0; // Initialize auto-like count
+                        review.maxAutoLikes = Math.floor(Math.random() * (14 - 7 + 1)) + 7; // 7 to 14 times
+                        review.autoLikeScheduled = true; // Mark as scheduled
+                        saveAppData(); // Save the new autoLikeScheduled and maxAutoLikes
+                        
+                        console.log(`Scheduling auto-likes for review ID ${reviewId}. Will auto-like ${review.maxAutoLikes} times.`);
+                        setTimeout(() => addAutoLike(reviewId), 60 * 60 * 1000); // First auto-like after 1 hour
+                    }
+                }
+            };
+            
+            const processPendingAutoLikes = () => {
+                appData.reviews.forEach(review => {
+                    // Check if a review needs auto-likes and hasn't completed them
+                    if (review.autoLikeScheduled && review.autoLikeCount < review.maxAutoLikes) {
+                        // Re-schedule the next auto-like for existing reviews
+                        // We assume that if autoLikeScheduled is true and count is less than max,
+                        // we need to continue the process from where it left off.
+                        // For simplicity, we'll just schedule the next like immediately on load,
+                        // and then subsequent ones will follow the 1-hour interval.
+                        // A more robust solution would track the last auto-like time and calculate remaining time.
+                        console.log(`Resuming auto-likes for review ID ${review.id}. Remaining: ${review.maxAutoLikes - review.autoLikeCount}`);
+                        setTimeout(() => addAutoLike(review.id), 1000); // Trigger next auto-like shortly after load
+                    }
+                });
+            };
+
+
+            const handleSubmitReview = () => {
+                const name = appData.userNameVal; // Get name from profile
+                const reviewText = els.reviewTextInput.value.trim();
+
+                if (reviewText.length < 10 || reviewText.length > 100) {
+                    els.reviewSubmissionMessage.style.color = 'var(--danger-red)';
+                    els.reviewSubmissionMessage.textContent = 'Please write a review between 10 and 100 characters.';
+                    return;
+                }
+
+                const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD format
+                const newReviewId = ++appData.lastReviewId; // Increment for unique ID
+                const newReview = {
+                    id: newReviewId,
+                    name: name,
+                    date: today,
+                    text: reviewText,
+                    likes: 0, 
+                    liked: false,
+                    autoLikeScheduled: false, // Flag to indicate if auto-likes have been scheduled
+                    autoLikeCount: 0, // Current count of auto-likes added
+                    maxAutoLikes: 0 // Max auto-likes for this review
+                };
+
+                appData.reviews.push(newReview);
+                saveAppData();
+                displayReviews(); // Update the displayed list
+                scheduleAutoLikes(newReview.id); // Schedule auto likes for the new review
+                
+                els.reviewTextInput.value = ''; // Clear textarea
+                els.reviewSubmissionMessage.style.color = 'var(--success-green)';
+                els.reviewSubmissionMessage.textContent = 'Your review has been submitted! Thank you!';
+
+                setTimeout(() => {
+                    els.reviewSubmissionMessage.textContent = ''; // Clear message after a few seconds
+                }, 3000);
+            };
+
+
+            const showPage = (pageId) => {
+                els.pages.forEach(page => {
+                    page.classList.remove('active');
+                });
+                document.getElementById(pageId).classList.add('active');
+                els.mainC.classList.add('hidden'); // Hide the main scrollable view
+
+                // Specific actions for new pages when shown
+                if (pageId === 'reviews-page') {
+                    displayReviews(); // Ensure reviews are updated when the page is opened
+                }
+            };
+
+            const goBack = () => {
+                els.pages.forEach(page => {
+                    page.classList.remove('active');
+                });
+                els.mainC.classList.remove('hidden'); // Show the main scrollable view
+                // Update URL without reloading
+                if (window.location.hash) {
+                    history.replaceState(null, '', window.location.pathname + window.location.search);
+                }
+                // Ensure 'account' nav button is active when returning to main view
+                els.navBtns.forEach(btn => btn.classList.remove('active'));
+                const accountNavBtn = document.querySelector('.nav-btn[data-nav-page="account"]');
+                if (accountNavBtn) accountNavBtn.classList.add('active');
+            };
+
+            const init = () => {
+                loadAppData(); // Load data from localStorage first
+                processPendingAutoLikes(); // Check for any pending auto-likes from previous sessions
+
+                els.userUidEl.textContent = appData.userUid;
+                els.userName.textContent = appData.userNameVal;
+                setProfilePic();
+                updateNotificationDisplay();
+                updateRedemptionHistoryDisplay();
+                displayReviews(); // Initialize reviews display on load
+
+                els.editProfilePicBtn.addEventListener('click', () => els.profilePicInput.click());
+                els.profilePicInput.addEventListener('change', handleProfilePicChange);
+                els.editNameBtn.addEventListener('click', handleNameEdit);
+                els.copyUidBtn.addEventListener('click', handleCopyUid);
+
+                els.redeemCodeBtn.addEventListener('click', handleRedeemCode);
+                els.submitReviewBtn.addEventListener('click', handleSubmitReview); // New: Review submission
+
+                // Event listener for cards/list items that open pages
+                els.navTriggers.forEach(item => {
+                    item.addEventListener('click', () => {
+                        const targetPageId = item.dataset.page;
+                        if (targetPageId) { // Check if it's a page navigation
+                            history.pushState({ page: targetPageId }, '', `#${targetPageId}`);
+                            showPage(targetPageId);
+                        }
+                    });
+                });
+
+                // Event listener for "Coming Soon" elements that are NOT nav buttons (like Transaction card, Browse FAQs button)
+                document.querySelectorAll('[data-coming-soon]').forEach(element => {
+                    // Check if the element is not a navigation button, as nav buttons have their own specific handling
+                    if (!element.classList.contains('nav-btn')) { 
+                        element.addEventListener('click', (event) => {
+                            event.preventDefault(); // Prevent default link behavior if it's an anchor tag
+                            showComingSoonModal();
+                        });
+                    }
+                });
+
+
+                els.backBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        // Use popstate for back button logic, or directly call goBack if history is simple
+                        if (history.length > 1 && history.state && history.state.page) {
+                            history.back(); // Let popstate handle it
+                        } else {
+                            goBack(); // Fallback for direct access or if no history state
+                        }
+                    });
+                });
+
+                window.addEventListener('popstate', evt => {
+                    if (evt.state && evt.state.page) {
+                        showPage(evt.state.page);
+                    } else {
+                        goBack(); // If no state, assume going back to main profile
+                    }
+                });
+
+
+                // Handle NEW navigation bar button clicks
+                els.navBtns.forEach(btn => {
+                    btn.addEventListener('click', (event) => {
+                        const navPage = btn.dataset.navPage;
+
+                        // Deactivate all nav buttons
+                        els.navBtns.forEach(b => b.classList.remove('active'));
+                        // Activate the clicked button
+                        btn.classList.add('active');
+
+                        if (navPage === 'agency' || navPage === 'wallet') {
+                            event.preventDefault(); // Prevent default link behavior for coming soon features
+                            showComingSoonModal();
+                        } else if (navPage === 'account') {
+                            event.preventDefault(); // Prevent default link behavior to handle it with goBack()
+                            goBack(); // This will effectively show the main profile page
+                        }
+                        // For 'home' and 'submit', default link behavior will navigate.
+                        // No explicit showPage/goBack needed here as it's a full page navigation.
+                    });
+                });
+
+                // Close Coming Soon Modal
+                els.closeComingSoonModalBtn.addEventListener('click', () => {
+                    els.comingSoonModal.classList.remove('active');
+                });
+
+                els.comingSoonModal.addEventListener('click', (e) => {
+                    if (e.target === els.comingSoonModal) {
+                        els.comingSoonModal.classList.remove('active');
+                    }
+                });
+
+                // Initial load: Check URL hash for direct page access or default to main profile
+                if (window.location.hash) {
+                    const initialPageId = window.location.hash.substring(1);
+                    const pageElement = document.getElementById(initialPageId);
+                    if (pageElement && pageElement.classList.contains('page')) {
+                        showPage(initialPageId);
+                    } else {
+                        // If hash is not a valid page, or if it was for a nav button that's not a page
+                        goBack(); // Go back to the main profile view
+                    }
+                } else {
+                    goBack(); // Always start on the main profile view if no hash
+                }
+            };
+            init();
+        });
+    </script>
+
+<footer style="background:#222; color:white; text-align:center; padding:15px; margin-top:20px;">
+  <p>&copy; 2025 Takoven. All Rights Reserved.</p>
+</footer>
+
+
+<div style="background:#f2f2f2; padding:15px; margin:15px 0; text-align:center; border-radius:8px;">
+  <h3>Total Wallet Balance: <span class="wallet-balance">$0</span></h3>
+</div>
+
+<script>
+function loadBalance() {
+  let balance = localStorage.getItem("walletBalance");
+  if (balance === null) {
+    balance = 120; // default balance
+    localStorage.setItem("walletBalance", balance);
+  }
+  document.querySelectorAll(".wallet-balance").forEach(el => {
+    el.innerText = "$" + balance;
+  });
+}
+
+function addFunds() {
+  let balance = parseInt(localStorage.getItem("walletBalance") || "0");
+  balance += 10;
+  localStorage.setItem("walletBalance", balance);
+  loadBalance();
+}
+
+function withdrawFunds() {
+  let balance = parseInt(localStorage.getItem("walletBalance") || "0");
+  if (balance >= 10) {
+    balance -= 10;
+    localStorage.setItem("walletBalance", balance);
+  } else {
+    alert("Not enough balance!");
+  }
+  loadBalance();
+}
+
+document.addEventListener("DOMContentLoaded", loadBalance);
+</script>
+
+</body>
+</html>

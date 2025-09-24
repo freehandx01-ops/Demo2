@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আপনার কাজের বিবরণ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        p {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        .highlight {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+        .button-section {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #2ecc71;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.2em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 10px;
+            min-width: 220px;
+        }
+        .button:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+        .button i {
+            margin-right: 8px;
+        }
+        .button.secondary {
+            background-color: #3498db;
+        }
+        .button.secondary:hover {
+            background-color: #2980b9;
+        }
+        .button.tertiary {
+            background-color: #f39c12;
+        }
+        .button.tertiary:hover {
+            background-color: #e67e22;
+        }
+        .button.quaternary {
+            background-color: #9b59b6;
+        }
+        .button.quaternary:hover {
+            background-color: #8e44ad;
+        }
+        .note {
+            background-color: #ffeaa7;
+            padding: 15px;
+            border-left: 5px solid #f39c12;
+            border-radius: 5px;
+            margin-top: 25px;
+            font-size: 1em;
+            color: #555;
+            text-align: left;
+        }
+        .separator {
+            border-top: 1px solid #eee;
+            margin: 30px 0;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+        .back-button {
+            position: fixed; /* Fixed position to stay visible on scroll */
+            top: 15px;
+            left: 15px;
+            z-index: 1000; /* Ensures button stays above other content */
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+        .back-button i {
+            font-size: 1.1em;
+        }
+        .back-button:hover {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .back-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            p {
+                font-size: 1em;
+            }
+            .section-title {
+                font-size: 1.3em;
+            }
+            .back-button {
+                top: 10px;
+                left: 10px;
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav style="background:#222; padding:10px;">
+  <ul style="list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap;">
+    <li style="margin:0 10px;"><a href="index.html" style="color:white; text-decoration:none;">Home</a></li>
+    <li style="margin:0 10px;"><a href="account.html" style="color:white; text-decoration:none;">Account</a></li>
+    <li style="margin:0 10px;"><a href="wallet.html" style="color:white; text-decoration:none;">Wallet</a></li>
+    <li style="margin:0 10px;"><a href="smm.html" style="color:white; text-decoration:none;">SMM</a></li>
+    <li style="margin:0 10px;"><a href="gmail.html" style="color:white; text-decoration:none;">Gmail</a></li>
+    <li style="margin:0 10px;"><a href="tiktop.html" style="color:white; text-decoration:none;">TikTok</a></li>
+    <li style="margin:0 10px;"><a href="getlike.html" style="color:white; text-decoration:none;">GetLike</a></li>
+    <li style="margin:0 10px;"><a href="center.html" style="color:white; text-decoration:none;">Center</a></li>
+  </ul>
+</nav>
+
+    <div class="container">
+        <a href="index.html" class="back-button">
+            <i class="fas fa-chevron-left"></i> Back
+        </a>
+
+        <h1>আপনার কাজের বিবরণ</h1>
+        
+        <p>ডেইলি ইনকাম <span class="highlight">৩০০ টাকা</span></p>
+        <p>কাজটি হচ্ছে <span class="highlight">টিকটকের ফলো করা</span>, আপনার শুধু TikTok একাউন্ট থাকলেই চলবে। কাজটি শুরু করতে নিচের ভিডিওটি দেখুন:</p>
+
+        <div class="button-section">
+            <a href="https://t.me/OnlineEarnEleven/121" class="button">
+                <i class="fas fa-video"></i> ভিডিও দেখুন
+            </a>
+        </div>
+
+        <p>উপরের ভিডিওটি দেখা হয়ে গেলে, কাজ করার জন্য নিচের বাটনে ক্লিক করে একটি একাউন্ট রেজিস্ট্রেশন করে নিন।</p>
+        
+        <div class="button-section">
+            <a href="https://tiktop-free.com/?ref=Himel%20Ahmed" class="button secondary">
+                <i class="fas fa-user-plus"></i> রেজিস্ট্রেশন করুন
+            </a>
+        </div>
+
+        <div class="note">
+            <p>উপরের ভিডিওটি আগে দেখে নিন, না হলে কিছুই বুঝতে পারবেন না।</p>
+        </div>
+
+        <hr class="separator">
+
+        <h2 class="section-title">পয়েন্ট সংগ্রহ</h2>
+        <p>দ্রুত ৫০০ পয়েন্ট কালেক্ট করার সহজ পদ্ধতি! নিচের দেওয়া ভিডিওটি দেখে নিন-</p>
+
+        <div class="button-section">
+            <a href="https://t.me/OnlineEarnEleven/122" class="button tertiary">
+                <i class="fas fa-chart-line"></i> দ্রুত পয়েন্ট কালেক্ট
+            </a>
+        </div>
+
+        <hr class="separator">
+
+        <h2 class="section-title">পেমেন্ট</h2>
+        <p>১ মিনিটে পেমেন্ট → নিচে দেওয়া ভিডিওটি দেখে টাকা উত্তোলন করতে হয় ⬇</p>
+
+        <div class="button-section">
+            <a href="https://youtu.be/8rI4X75frOM?si=Xgl6xZGn8zcQOcqk" class="button quaternary">
+                <i class="fas fa-wallet"></i> পেমেন্ট ভিডিও
+            </a>
+        </div>
+    </div>
+
+<footer style="background:#222; color:white; text-align:center; padding:15px; margin-top:20px;">
+  <p>&copy; 2025 Takoven. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>

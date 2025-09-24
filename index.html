@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Earnovate</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Global Variables - Merged and updated for consistency */
+    :root {
+      --primary: #4f46e5; /* Professional indigo for actions/branding */
+      --secondary: #10b981; /* Professional teal for highlights */
+      --accent: #f59e0b; /* Professional amber */
+      --dark: #1e293b;
+      --light: #ffffff;
+      --light-80: #f8fafc; /* For light backgrounds */
+      --glass-bg: rgba(255, 255, 255, 0.25); /* Adjusted transparency slightly */
+      --glass-blur: blur(15px);
+      --shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Adjusted shadow for auth forms */
+      --neon-shadow: 0 0 10px rgba(255, 45, 85, 0.2); /* Kept for specific elements if needed */
+      --golden: #B89736;
+      --golden-shadow: 0 0 10px rgba(184, 151, 54, 0.5);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother transitions */
+      --radius: 12px;
+      --radius-lg: 16px; /* Larger radius for main auth/dashboard cards */
+      --font-stack: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --wallet-primary: #3b82f6;
+      --wallet-secondary: #60a5fa;
+      --wallet-red: #ef4444;
+      --wallet-green: #10b981;
+      --wallet-orange: #d97706;
+      --wallet-dark-60: rgba(0, 0, 0, 0.6);
+      --error: #ef4444;
+      --success: #10b981;
+      --logout-red: #dc2626; /* A more professional red for logout */
+      --logout-red-dark: #b91c1c; /* Darker shade for hover */
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-stack); }
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden; /* Prevent horizontal scrolling */
+      scroll-behavior: smooth; /* Smooth scroll behavior */
+    }
+    body {
+      background: linear-gradient(135deg, var(--light-80), #e0e7ff); /* Gradient for login/signup */
+      color: var(--dark);
+      display: flex;
+      flex-direction: column; /* Allows main container to center content or stretch */
+      justify-content: flex-start; /* Aligns content to start, will be changed by JS */
+      align-items: center;
+      font-size: 16px;
+      line-height: 1.6;
+      touch-action: pan-y; /* For smooth scrolling */
+    }
+    /* Main container for initial load - centers auth forms */
+    .main-wrapper-initial {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        flex-grow: 1; /* Make it take available space for centering */
+        width: 100%;
+        padding: 24px; /* General padding */
+    }
+    .main-wrapper-dashboard {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1; /* For dashboard layout */
+        width: 100%;
+        /* Ensure dashboard content always pushes footer down */
+        min-height: calc(100vh - 60px); /* Account for header */
+        padding-bottom: 90px; /* Space for fixed nav bar */
+    }
+
+    /* Header (Dashboard specific) */
+    .header {
+      position: fixed; top: 0; left: 0; width: 100%;
+      background: var(--glass-bg); backdrop-filter: var(--glass-blur);
+      color: var(--dark); padding: 12px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: var(--shadow); z-index: 1000;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1); transition: var(--transition);
+    }
+    .header h1 {
+      font-size: 26px; font-weight: 700; text-transform: uppercase; color: var(--dark);
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+    }
+    /* Shimmer animation for the Earnovate header */
+    .header h1.shimmer::after { /* Only apply shimmer to h1 with 'shimmer' class */
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+      transform: translateX(-100%);
+      animation: earnovate-shimmer 2s infinite ease-in-out;
+      animation-delay: 1s;
+    }
+    @keyframes earnovate-shimmer {
+      0% { transform: translateX(-100%); }
+      50% { transform: translateX(100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .leaderboard-icon {
+      background: none; border: none; color: var(--golden); font-size: 22px;
+      cursor: pointer; padding: 8px; text-shadow: var(--golden-shadow);
+      transition: var(--transition);
+    }
+    .leaderboard-icon:hover, .leaderboard-icon:focus { color: var(--primary); transform: rotate(5deg); outline: none; }
+
+    /* Nav Bar (Dashboard specific) */
+    .nav-bar {
+      position: fixed; bottom: 0; left: 0; width: 100%;
+      background: var(--light); padding: 10px 15px;
+      display: flex; justify-content: space-around; align-items: center;
+      box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.2); z-index: 1000;
+      border-top: 2px solid rgba(0, 0, 0, 0.1); backdrop-filter: var(--glass-blur);
+    }
+    .nav-btn {
+      background: none; border: none; color: var(--dark); font-size: 12px;
+      font-weight: 600; cursor: pointer; padding: 10px;
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      transition: var(--transition); width: 60px; height: 60px; overflow: hidden;
+      text-decoration: none;
+    }
+    .nav-btn i { font-size: 20px; transition: var(--transition); }
+    .nav-btn:hover, .nav-btn:focus {
+      color: var(--primary); background: rgba(79, 70, 229, 0.1); /* Adjusted to new primary */
+      transform: translateY(-5px); outline: none;
+    }
+    .nav-btn.active {
+      color: var(--primary);
+      background: none;
+      outline: none;
+      transform: translateY(0);
+    }
+    .nav-btn.active i {
+      text-shadow: 0 0 10px rgba(79, 70, 229, 0.4); /* Adjusted to new primary */
+    }
+    .nav-btn.submit-btn {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: var(--light);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      width: 70px; height: 70px; padding: 0;
+      display: flex; justify-content: center; align-items: center;
+      box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3), 0 0 20px rgba(16, 185, 129, 0.3); /* Adjusted to new primary/secondary */
+      transform: translateY(-25px); transition: var(--transition);
+      border-radius: 0;
+    }
+    .nav-btn.submit-btn i { font-size: 26px; text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); }
+    .nav-btn.submit-btn:hover, .nav-btn.submit-btn:focus {
+      transform: translateY(-30px) scale(1.1);
+      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4), 0 0 30px rgba(16, 185, 129, 0.4); /* Adjusted to new primary/secondary */
+      outline: none;
+    }
+
+    /* Dashboard Content Area */
+    .dashboard-container {
+      flex-grow: 1; padding: 70px 10px 20px; /* Adjusted bottom padding to avoid jump */
+      display: flex; flex-direction: column; gap: 20px;
+      max-width: 480px; margin: 0 auto; width: 100%;
+      min-height: calc(100vh - 70px - 90px); /* Header height - nav height */
+    }
+    .section { opacity: 1; transform: translateY(0); will-change: opacity, transform; }
+    .section.animate-in { animation: fadeInUp 0.6s ease-out forwards; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .section-header {
+      font-size: 22px; font-weight: 700; color: var(--dark);
+      padding: 12px 18px; background: var(--glass-bg); backdrop-filter: var(--glass-blur);
+      border-radius: var(--radius); box-shadow: var(--shadow); position: relative; overflow: hidden;
+    }
+
+    /* --- Poster Slider (Updated for Full Image) --- */
+    .poster-slider {
+      position: relative; height: 220px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden; user-select: none;
+      touch-action: pan-y; width: 100%; /* No padding-bottom here, dots below */
+    }
+    .slider-item {
+      width: 100%; height: 100%; display: none; position: absolute;
+      top: 0; left: 0; text-align: center;
+      background: transparent; /* Changed background for full image */
+      will-change: transform, opacity; transition: opacity 0.5s ease, transform 0.5s ease;
+      flex-direction: column; align-items: center; justify-content: center;
+    }
+    .slider-item.active { display: flex; opacity: 1; transform: scale(1); }
+    .slider-item:not(.active) { opacity: 0; transform: scale(0.95); }
+    .slider-item img {
+      width: 100%; /* Make image take full width of slider item */
+      height: 100%; /* Make image take full height of slider item */
+      object-fit: cover; /* Cover the area, cropping if necessary */
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .slider-item.active img { opacity: 1; }
+    /* Removed slider-caption specific styles */
+
+    .loading-spinner {
+      display: none; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%); border: 4px solid var(--light-80);
+      border-top: 4px solid var(--primary); border-radius: 50%;
+      width: 30px; height: 30px; animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+    .slider-dots { display: flex; justify-content: center; gap: 6px; padding-top: 10px; position: relative; z-index: 10; }
+    .slider-dot {
+      width: 8px; height: 8px; background: var(--light-80);
+      border-radius: 50%; cursor: pointer; transition: var(--transition);
+    }
+    .slider-dot.active { background: var(--primary); transform: scale(1.2); }
+    /* --- End Poster Slider (Updated for Full Image) --- */
+
+
+    /* --- Work Updates Grid - Refined for Professional Icons --- */
+    .work-updates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* Adjusted minmax */
+      gap: 15px;
+      padding: 10px;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .work-item {
+      position: relative;
+      text-align: center;
+      padding: 12px; /* Adjusted padding */
+      background: var(--glass-bg); /* Use glass background */
+      backdrop-filter: var(--glass-blur); /* Apply blur */
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: var(--transition);
+      will-change: transform, box-shadow;
+      display: flex; /* Flexbox for centering content */
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: var(--dark);
+      min-height: 100px; /* Ensure a minimum height for consistency */
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle glass border */
+    }
+
+    .work-item:hover,
+    .work-item:focus {
+      transform: scale(1.1); /* Lift and significantly scale */
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+      outline: none;
+    }
+
+    /* Radial gradient effect on hover */
+    .work-item::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(79, 70, 229, 0.1), transparent); /* Primary color glow */
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 0; /* Behind content */
+      border-radius: var(--radius); /* Match item radius */
+    }
+
+    .work-item:hover::after,
+    .work-item:focus::after {
+      opacity: 1; /* Show effect on hover/focus */
+    }
+
+    /* Style for icons */
+    .work-item i {
+      font-size: 28px; /* Larger icons */
+      margin-bottom: 6px; /* Space between icon and text */
+      transition: var(--transition);
+      position: relative; /* For z-index if needed */
+      z-index: 1; /* Above the ::after glow */
+    }
+
+    /* Specific icon colors */
+    .work-item[data-type="Tiktop"] i { color: #000; }
+    .work-item[data-type="Gmail"] i { color: #db4437; }
+    .work-item[data-type="Getlike"] i { color: #00c4ff; }
+    .work-item[data-type="IPWeb"] i { color: #4caf50; }
+    .work-item[data-type="Facebook"] i { color: #1877f2; }
+    .work-item[data-type="Instagram"] i { color: #e1306c; }
+    .work-item[data-type="SMM Task"] i { color: #ff9800; }
+
+    .work-item span.work-item-name { /* For the actual visible text */
+      font-size: 11px;
+      color: var(--dark);
+      display: block; /* Ensures it takes full width */
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Tooltip styles */
+    .work-item .tooltip {
+      position: absolute;
+      top: -35px; /* Position above the item */
+      left: 50%;
+      transform: translateX(-50%); /* Center tooltip */
+      background: var(--primary); /* Primary color background for tooltip */
+      color: var(--light); /* White text for contrast */
+      padding: 4px 8px;
+      border-radius: 5px;
+      font-size: 10px; /* Small font size */
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 10; /* Ensure tooltip is on top */
+      white-space: nowrap;
+    }
+
+    .work-item:hover .tooltip,
+    .work-item:focus .tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0); /* No vertical lift on hover for tooltip */
+    }
+
+    .work-item .tooltip::after {
+      content: '';
+      position: absolute;
+      bottom: -5px; /* Position below the tooltip box */
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 5px;
+      border-style: solid;
+      border-color: var(--primary) transparent transparent transparent; /* Match tooltip background */
+    }
+    /* --- End Work Updates Grid Updates --- */
+
+
+    .community-buttons {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 15px; padding: 10px; width: 100%; margin-bottom: 20px;
+    }
+    .community-btn {
+      position: relative; padding: 15px; color: var(--light); border: none;
+      border-radius: var(--radius); font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: var(--transition); display: flex;
+      align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.2); overflow: hidden; will-change: transform;
+      text-decoration: none;
+    }
+    .community-btn[data-type="WhatsApp"] { background: linear-gradient(45deg, #25d366, #1da851); box-shadow: 0 0 8px rgba(37, 211, 102, 0.3); }
+    .community-btn[data-type="Telegram"] { background: linear-gradient(45deg, #0088cc, #00c4ff); box-shadow: 0 0 8px rgba(0, 136, 204, 0.3); }
+    .community-btn[data-type="YouTube"] { background: linear-gradient(45deg, #ff0000, #ff5252); box-shadow: 0 0 8px rgba(255, 0, 0, 0.3); }
+    .community-btn:hover, .community-btn:focus { transform: translateY(-6px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); outline: none; }
+    .community-btn::after {
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      border-radius: var(--radius); background: linear-gradient(45deg, var(--primary), var(--secondary));
+      z-index: -1; animation: borderGlow 2s infinite; opacity: 0; /* Hidden by default */
+    }
+    .community-btn:hover::after, .community-btn:focus::after {
+      opacity: 1; /* Show on hover/focus */
+    }
+    @keyframes borderGlow { 0% { opacity: 0.3; } 50% { opacity: 0.6; } 100% { opacity: 0.3; } }
+    .community-btn::before {
+      content: ''; position: absolute; width: 0; height: 0; background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%; transform: scale(0); transition: transform 0.6s ease-out;
+    }
+    .community-btn:active::before { width: 200px; height: 200px; transform: translate(-50%, -50%) scale(1); left: 50%; top: 50%; }
+    .community-btn .member-count { font-size: 11px; opacity: 0.8; }
+    .community-btn .btn-spinner {
+      display: none; border: 3px solid var(--light-80); border-top: 3px solid var(--light);
+      border-radius: 50%; width: 18px; height: 18px; animation: spin 0.8s linear infinite; margin-left: 8px;
+    }
+
+    /* --- Modal Styling (Enhanced) --- */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7); z-index: 1000; align-items: center; justify-content: center;
+      transition: opacity 0.3s ease;
+      opacity: 0; /* Hidden by default for fade in */
+    }
+    .modal.active {
+        display: flex;
+        opacity: 1;
+    }
+    .modal-content {
+      /* background: var(--glass-bg); */ /* Original glass background */
+      background: var(--light); /* Changed to white background */
+      backdrop-filter: none; /* Remove backdrop-filter for solid background */
+      padding: 30px; /* Increased padding */
+      border-radius: var(--radius-lg); /* Larger radius */
+      text-align: center;
+      max-width: 350px; /* Slightly wider */
+      width: 90%;
+      box-shadow: var(--shadow);
+      animation: popIn 0.4s ease;
+      will-change: transform, opacity;
+      border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border for white background */
+    }
+    @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-content h3 { font-size: 20px; color: var(--primary); margin-bottom: 15px; font-weight: 700; }
+    .modal-content p { font-size: 14px; color: var(--dark); margin-bottom: 25px; line-height: 1.5; }
+
+    /* New styles for the Coming Soon modal button */
+    .modal-content .modal-close-btn { /* Changed from generic button to a specific class */
+      /* background: var(--primary); */ /* Original primary color */
+      background: #333; /* Changed to light black/dark gray */
+      color: var(--light); /* White text */
+      border: none; /* No border */
+      padding: 12px 25px; /* Increased padding */
+      border-radius: 25px; /* More rounded pill shape */
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Adjusted shadow for light black button */
+    }
+    .modal-content .modal-close-btn:hover,
+    .modal-content .modal-close-btn:focus {
+      transform: translateY(-2px); /* Lift slightly */
+      background: #555; /* Darker gray on hover */
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Darker shadow on hover */
+      outline: none;
+    }
+    /* --- End Modal Styling --- */
+
+    /* Leaderboard Section */
+    #leaderboard-section {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: var(--light); z-index: 950; display: none; box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+    #leaderboard-section.hidden { /* Use a class to hide/show leaderboard */
+        display: none;
+    }
+
+    .leaderboard-header { /* New header for the leaderboard page */
+        position: sticky;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        padding: 12px 10px; /* Increased horizontal padding slightly */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: var(--shadow);
+        z-index: 952;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px; /* Space below header */
+        flex-shrink: 0; /* Prevent it from shrinking */
+    }
+    .leaderboard-header h2 {
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--dark);
+        text-align: center;
+        flex-grow: 1; /* Make it take available space */
+        margin-right: 50px; /* Push title left to avoid collision with back button */
+    }
+
+
+    .back-btn {
+      background: #666; color: var(--light); border: 1px solid #ccc;
+      padding: 10px; border-radius: 50%; font-size: 16px; cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      flex-shrink: 0; /* Prevent shrinking */
+      margin-left: 10px; /* Add margin to the left */
+    }
+    .back-btn:hover, .back-btn:focus { transform: scale(1.1); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); background: #555; outline: none; }
+    .tabs {
+      display: flex; justify-content: space-around; background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur); border-radius: var(--radius);
+      padding: 6px; box-shadow: var(--shadow); position: sticky; top: 68px; /* Adjusted top for sticky below new header */
+      z-index: 951;
+      margin-bottom: 15px; /* Space below tabs */
+      flex-shrink: 0;
+    }
+    .tab-btn {
+      background: none; border: none; color: var(--dark); font-size: 14px;
+      font-weight: 600; padding: 10px 15px; cursor: pointer;
+      transition: var(--transition); border-radius: var(--radius);
+      flex: 1; text-align: center;
+    }
+    .tab-btn.active { background: var(--primary); color: var(--light); transform: scale(1.05); }
+    .tab-btn:hover, .tab-btn:focus { background: rgba(79, 70, 229, 0.2); color: var(--primary); outline: none; } /* Adjusted to new primary */
+    .leaderboard-section-content { /* New wrapper for scrollable leaderboard content */
+      flex-grow: 1; /* Make it take remaining space */
+      overflow-y: auto; /* Enable scrolling for this area */
+      padding: 0 20px 40px; /* Padding for content inside scrollable area - Increased bottom padding */
+      max-width: 480px; /* Constrain width */
+      margin: 0 auto; /* Center content */
+      width: 100%;
+    }
+    .leaderboard-section-content > .leaderboard-section { /* Target the actual list containers */
+        min-height: calc(100% - 15px); /* Ensure content section doesn't collapse + margin from tabs */
+        padding-bottom: 20px; /* Additional padding at the bottom of the list */
+    }
+
+    .leaderboard-section { display: none; }
+    .leaderboard-section.active { display: block; }
+    .leaderboard-list {
+      list-style: none; background: var(--glass-bg); backdrop-filter: var(--glass-blur);
+      border-radius: var(--radius); box-shadow: var(--shadow); padding: 10px;
+      animation: fadeIn 0.5s ease; margin-top: 0; /* Remove top margin here */
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .leaderboard-item {
+      display: flex; align-items: center; padding: 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1); transition: var(--transition);
+    }
+    .leaderboard-item:last-child { border-bottom: none; }
+    .leaderboard-item:hover, .leaderboard-item:focus { background: rgba(79, 70, 229, 0.05); transform: translateX(5px); outline: none; } /* Adjusted to new primary */
+    .rank {
+      width: 40px; height: 40px; display: flex; align-items: center;
+      justify-content: center; font-size: 16px; font-weight: 600;
+      border-radius: 50%; margin-right: 15px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+    .rank-1 { background: #FFD700; color: var(--dark); }
+    .rank-2 { background: #C0C0C0; color: var(--dark); }
+    .rank-3 { background: #CD7F32; color: var(--dark); }
+    .rank-default { background: var(--light-80); color: var(--dark); }
+    .user-info { flex: 1; }
+    .user-info .name { font-size: 15px; font-weight: 500; }
+    .user-info .amount { font-size: 12px; color: #4caf50; font-weight: 500; }
+    .footer {
+      margin-top: auto; text-align: center; padding: 20px 10px;
+      font-size: 14px; font-weight: 500; color: var(--golden);
+    }
+    .scroll-indicator {
+      position: fixed; top: 0; left: 0; width: 100%; height: 4px;
+      background: var(--primary); z-index: 1000;
+      transform-origin: left; transform: scaleX(0);
+    }
+
+    /* Auth Specific Styles */
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    /* Removed h1 specific styles from here as it's replaced by img */
+    .auth-logo p {
+      color: var(--dark);
+      opacity: 0.8;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    /* Style for the new logo image */
+    .auth-logo img {
+        max-width: 180px; /* Adjust as needed for your logo size */
+        height: auto;
+        margin-bottom: 10px; /* Space between logo and motto */
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); /* Subtle shadow for depth */
+    }
+
+    .auth-section-wrapper { /* New wrapper for auth forms */
+        background: transparent;
+        color: var(--dark);
+        border-radius: var(--radius-lg);
+        box-shadow: none;
+        flex-direction: column;
+        width: 100%;
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        max-width: 480px; /* Constrain auth forms width */
+        padding: 24px; /* Padding inside the auth wrapper */
+        gap: 24px; /* Gap between logo and form container */
+    }
+    .auth-form-container {
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        padding: 32px;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+        animation: fadeInUp 0.6s ease-out forwards;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .auth-form-container h2 {
+        font-size: 24px;
+        color: var(--primary);
+        margin-bottom: 28px;
+        font-weight: 700;
+    }
+    .input-group {
+        position: relative;
+        margin-bottom: 20px;
+        text-align: left;
+    }
+    .input-group i {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(30, 41, 59, 0.6);
+        font-size: 18px;
+    }
+    .input-group input {
+        width: 100%;
+        padding: 14px 16px 14px 48px;
+        border: 1px solid rgba(30, 41, 59, 0.1);
+        border-radius: var(--radius);
+        font-size: 15px;
+        color: var(--dark);
+        background: rgba(255, 255, 255, 0.8);
+        transition: var(--transition);
+    }
+    .input-group input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        outline: none;
+        background: var(--light);
+    }
+    .auth-btn {
+        width: 100%;
+        padding: 14px;
+        background: var(--primary);
+        color: var(--light);
+        border: none;
+        border-radius: var(--radius);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: 0 4px 6px rgba(79, 70, 229, 0.1);
+        margin-top: 12px;
+    }
+    .auth-btn:hover, .auth-btn:focus {
+        transform: translateY(-2px);
+        background: var(--secondary);
+        box-shadow: 0 6px 12px rgba(16, 185, 129, 0.15);
+        outline: none;
+    }
+    .switch-auth-mode {
+        margin-top: 24px;
+        font-size: 14px;
+        color: rgba(30, 41, 59, 0.7);
+    }
+    .switch-auth-mode button {
+        background: none;
+        border: none;
+        color: var(--primary);
+        font-weight: 600;
+        cursor: pointer;
+        padding: 0;
+        font-size: 14px;
+        transition: color 0.3s ease;
+    }
+    .switch-auth-mode button:hover {
+        color: var(--secondary);
+        text-decoration: underline;
+    }
+    .error-message {
+        color: var(--error);
+        font-size: 13px;
+        margin-top: -16px;
+        margin-bottom: 8px;
+        text-align: left;
+        padding-left: 8px;
+    }
+
+    /* Dashboard Welcome Content - Shown only for logged in */
+    .dashboard-welcome-content {
+        display: none; /* Hidden by default */
+        text-align: center;
+        padding: 40px 32px;
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        max-width: 600px;
+        margin: 0 auto;
+        font-size: 1.1em;
+        line-height: 1.8;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .dashboard-welcome-content h2 {
+        color: var(--primary);
+        margin-bottom: 24px;
+        font-size: 28px;
+    }
+    .dashboard-welcome-content p {
+        margin-bottom: 24px;
+        color: var(--dark);
+    }
+
+
+    /* Mobile Media Queries (consolidated and adjusted) */
+    @media (max-width: 480px) {
+      /* Main wrapper for initial view */
+      .main-wrapper-initial { padding: 16px; }
+
+      /* Dashboard layout adjustments */
+      .header { padding: 10px 15px; } .header h1 { font-size: 22px; } .leaderboard-icon { font-size: 20px; padding: 6px; }
+      .nav-bar { padding: 8px 10px; } .nav-btn { font-size: 11px; padding: 8px; width: 55px; height: 55px; }
+      .nav-btn i { font-size: 18px; } .nav-btn.submit-btn { width: 60px; height: 60px; transform: translateY(-12px); }
+      .nav-btn.submit-btn i { font-size: 22px; }
+      .dashboard-container { padding-top: 60px; padding-bottom: 80px; padding-left: 10px; padding-right: 10px; }
+      .section-header { font-size: 20px; padding: 10px 15px; } .poster-slider { height: 180px; /* Adjust height */ }
+      /* .slider-caption { font-size: 12px; } */ /* Removed */
+      .slider-dots { gap: 5px; padding-top: 8px; } .slider-dot { width: 6px; height: 6px; }
+
+      /* Adjusted for work updates with icons */
+      .work-updates-grid { gap: 12px; padding: 8px; margin-top: 15px; }
+      .work-item { padding: 10px; min-height: 90px; } /* Adjusted fixed height */
+      .work-item i { font-size: 24px; margin-bottom: 5px; } /* Adjusted icon size */
+      .work-item span.work-item-name { font-size: 10px; } /* Adjusted text size */
+      .work-item .tooltip { font-size: 9px; top: -30px; padding: 3px 6px; } /* Adjusted tooltip size/position */
+
+      .community-buttons { gap: 12px; padding: 8px; } .community-btn { padding: 12px; font-size: 12px; }
+      .community-btn i { font-size: 16px; } .community-btn .member-count { font-size: 10px; }
+      #leaderboard-section { padding: 0; } /* Removed overall padding, handled by inner elements */
+      .leaderboard-header { padding: 10px 15px; } /* Adjust header padding */
+      .leaderboard-header h2 { font-size: 22px; margin-right: 40px; } /* Adjust font size and margin */
+      .back-btn { padding: 8px; font-size: 14px; width: 35px; height: 35px; margin-left: 8px; }
+      .tabs { padding: 5px; top: 60px; } .tab-btn { font-size: 12px; padding: 8px 10px; }
+      .leaderboard-section-content { padding: 0 10px 40px; } /* Adjusted content padding - Increased bottom padding */
+      .leaderboard-list { margin-top: 0; } /* No top margin here */
+      .leaderboard-item { padding: 8px; }
+      .rank { width: 35px; height: 35px; font-size: 14px; margin-right: 12px; }
+      .user-info .name { font-size: 13px; } .user-info .amount { font-size: 11px; } .footer { padding: 18px; font-size: 12px; }
+
+      /* Modal Specifics for Mobile */
+      .modal-content { padding: 20px; max-width: 300px; }
+      .modal-content h3 { font-size: 18px; margin-bottom: 12px; }
+      .modal-content p { font-size: 13px; margin-bottom: 20px; }
+      .modal-content .modal-close-btn { padding: 10px 20px; font-size: 13px; }
+    }
+    @media (max-width: 375px) {
+        .main-wrapper-initial { padding: 12px; }
+        .auth-section-wrapper { padding: 12px; }
+        .auth-logo img { max-width: 150px; } /* Adjust for smaller screens */
+        .auth-logo p { font-size: 13px; }
+        .auth-form-container { padding: 20px; }
+        .auth-form-container h2 { font-size: 20px; margin-bottom: 20px; }
+        .input-group input { padding: 10px 12px 10px 40px; font-size: 14px; }
+        .auth-btn { padding: 12px; font-size: 15px; }
+        .dashboard-welcome-content { padding: 32px 24px; }
+
+        .header { padding: 8px 12px; } .header h1 { font-size: 20px; } .leaderboard-icon { font-size: 18px; padding: 5px; }
+        .nav-btn { width: 50px; height: 50px; font-size: 10px; } .nav-btn i { font-size: 16px; }
+        .nav-btn.submit-btn { width: 55px; height: 55px; transform: translateY(-10px); }
+        .nav-btn.submit-btn i { font-size: 20px; }
+        .dashboard-container { padding-top: 55px; padding-bottom: 70px; padding-left: 8px; padding-right: 8px; }
+        .section-header { font-size: 18px; padding: 8px 12px; } .poster-slider { height: 160px; /* Adjust height */ }
+
+        /* Adjusted for work updates with icons */
+        .work-item { padding: 8px; min-height: 80px; } /* Adjusted fixed height */
+        .work-item i { font-size: 20px; margin-bottom: 4px; }
+        .work-item span.work-item-name { font-size: 9px; }
+        .work-item .tooltip { font-size: 8px; top: -25px; padding: 2px 5px; }
+
+        .community-btn { padding: 10px; font-size: 11px; } .community-btn i { font-size: 14px; }
+        .leaderboard-header { padding: 8px 8px; }
+        .leaderboard-header h2 { font-size: 20px; margin-right: 35px; }
+        .back-btn { padding: 6px; font-size: 12px; width: 30px; height: 30px; margin-left: 6px; }
+        .tabs { font-size: 11px; padding: 6px 8px; top: 56px; }
+        .leaderboard-section-content { padding: 0 8px 40px; } /* Increased bottom padding */
+        .rank { width: 30px; height: 30px; font-size: 12px; margin-right: 10px; }
+        .user-info .name { font-size: 12px; } .user-info .amount { font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav style="background:#222; padding:10px;">
+  <ul style="list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap;">
+    <li style="margin:0 10px;"><a href="index.html" style="color:white; text-decoration:none;">Home</a></li>
+    <li style="margin:0 10px;"><a href="account.html" style="color:white; text-decoration:none;">Account</a></li>
+    <li style="margin:0 10px;"><a href="wallet.html" style="color:white; text-decoration:none;">Wallet</a></li>
+    <li style="margin:0 10px;"><a href="smm.html" style="color:white; text-decoration:none;">SMM</a></li>
+    <li style="margin:0 10px;"><a href="gmail.html" style="color:white; text-decoration:none;">Gmail</a></li>
+    <li style="margin:0 10px;"><a href="tiktop.html" style="color:white; text-decoration:none;">TikTok</a></li>
+    <li style="margin:0 10px;"><a href="getlike.html" style="color:white; text-decoration:none;">GetLike</a></li>
+    <li style="margin:0 10px;"><a href="center.html" style="color:white; text-decoration:none;">Center</a></li>
+  </ul>
+</nav>
+
+
+  <div class="main-wrapper-initial" id="auth-wrapper">
+    <div class="auth-logo">
+      <img src="logo.png" alt="Earnovate Logo">
+      <p>Maximize your earnings potential</p>
+    </div>
+
+    <div class="auth-section-wrapper" id="auth-section">
+      <div class="auth-form-container" id="login-form">
+        <h2>Login</h2>
+        <form>
+          <div class="input-group">
+            <i class="fas fa-mobile-alt"></i>
+            <input type="tel" id="login-whatsapp" placeholder="WhatsApp Number" required>
+          </div>
+          <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="login-password" placeholder="Password" required>
+          </div>
+          <button type="submit" class="auth-btn">Login</button>
+        </form>
+        <div class="switch-auth-mode">
+          Don't have an account? <button id="show-signup" type="button">Sign Up</button>
+        </div>
+      </div>
+
+      <div class="auth-form-container" id="signup-form" style="display: none;">
+        <h2>Sign Up</h2>
+        <form>
+          <div class="input-group">
+            <i class="fas fa-mobile-alt"></i>
+            <input type="tel" id="signup-whatsapp" placeholder="WhatsApp Number" required>
+          </div>
+          <div class="input-group">
+            <i class="fas fa-users"></i>
+            <input type="text" id="signup-team-code" placeholder="Team Code (Optional)">
+          </div>
+          <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="signup-password" placeholder="Password" required>
+          </div>
+          <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="signup-confirm-password" placeholder="Confirm Password" required>
+          </div>
+          <p class="error-message" id="password-match-error" style="display: none;">Passwords do not match!</p>
+          <button type="submit" class="auth-btn">Create Account</button>
+        </form>
+        <div class="switch-auth-mode">
+          Already have an account? <button id="show-login" type="button">Login</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-wrapper-dashboard" id="dashboard-main-content" style="display: none;">
+    <div class="scroll-indicator"></div>
+    <div class="header" id="main-header">
+      <h1 class="header-title shimmer">EARNOVATE</h1> <button class="leaderboard-icon" aria-label="View Leaderboard" id="leaderboard-toggle"><i class="fas fa-trophy"></i></button>
+    </div>
+
+    <div class="nav-bar">
+      <button class="nav-btn active" aria-label="Home" data-section="home">
+        <i class="fas fa-home"></i><span>Home</span>
+      </button>
+      <a href="#" class="nav-btn" aria-label="Agency" data-section="agency" id="nav-agency-btn">
+        <i class="fas fa-building"></i><span>Agency</span>
+      </a>
+      <a href="center.html" class="nav-btn submit-btn" aria-label="Submit Task" data-section="submit">
+        <i class="fas fa-rocket"></i>
+      </a>
+      <a href="#" class="nav-btn" aria-label="Wallet" data-section="wallet" id="nav-wallet-btn">
+        <i class="fas fa-wallet"></i><span>Wallet</span>
+      </a>
+      <a href="account.html" class="nav-btn" aria-label="Account" data-section="account">
+        <i class="fas fa-user"></i><span>Account</span>
+      </a>
+    </div>
+
+    <div class="dashboard-container" id="main-content-container">
+      <div class="section" id="home-section">
+        <div class="section">
+          <div class="poster-slider" id="poster-slider">
+            <div class="slider-item active">
+              <img src="notice1.jpg" alt="Notice 1" loading="lazy" />
+              <div class="loading-spinner"></div>
+            </div>
+            <div class="slider-item">
+              <img src="notice2.jpg" alt="Notice 2" loading="lazy" />
+              <div class="loading-spinner"></div>
+            </div>
+            <div class="slider-item">
+              <img src="notice3.jpg" alt="Notice 3" loading="lazy" />
+              <div class="loading-spinner"></div>
+            </div>
+          </div>
+          <div class="slider-dots" id="slider-dots"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-header" id="work-updates-header">Work Updates</div>
+          <div class="work-updates-grid">
+            <a href="tiktop.html" class="work-item" data-type="Tiktop" aria-label="Tiktop Tasks">
+              <i class="fab fa-tiktok"></i><span class="work-item-name">Tiktop</span>
+              <div class="tooltip">Tiktop Tasks</div>
+            </a>
+            <a href="gmail.html" class="work-item" data-type="Gmail" aria-label="Gmail Tasks">
+              <i class="fab fa-google"></i><span class="work-item-name">Gmail</span>
+              <div class="tooltip">Gmail Tasks</div>
+            </a>
+            <a href="getlike.html" class="work-item" data-type="Getlike" aria-label="Getlike Tasks">
+              <i class="fas fa-thumbs-up"></i><span class="work-item-name">Getlike</span>
+              <div class="tooltip">Getlike Tasks</div>
+            </a>
+            <a href="ipweb.html" class="work-item" data-type="IPWeb" aria-label="IPWeb Tasks">
+              <i class="fas fa-globe"></i><span class="work-item-name">IPWeb</span>
+              <div class="tooltip">IPWeb Tasks</div>
+            </a>
+            <a href="#" class="work-item coming-soon-trigger" data-type="Facebook" aria-label="Facebook Tasks">
+              <i class="fab fa-facebook-f"></i><span class="work-item-name">Facebook</span>
+              <div class="tooltip">Facebook Tasks (Coming Soon)</div>
+            </a>
+            <a href="#" class="work-item coming-soon-trigger" data-type="Instagram" aria-label="Instagram Tasks">
+              <i class="fab fa-instagram"></i><span class="work-item-name">Instagram</span>
+              <div class="tooltip">Instagram Tasks (Coming Soon)</div>
+            </a>
+            <a href="smm.html" class="work-item" data-type="SMM Task" aria-label="SMM Tasks">
+              <i class="fas fa-bullhorn"></i><span class="work-item-name">SMM Task</span>
+              <div class="tooltip">SMM Tasks</div>
+            </a>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header" id="community-header">Community</div>
+          <div class="community-buttons">
+            <a href="https://chat.whatsapp.com/GRdidT6uVxZ1zpQLuQdVfl" target="_blank" class="community-btn" data-type="WhatsApp" aria-label="Join WhatsApp Community">
+              <i class="fab fa-whatsapp"></i> WhatsApp <span class="member-count">10K+</span> <span class="btn-spinner"></span>
+            </a>
+            <a href="https://t.me/OnlineEarnEleven" target="_blank" class="community-btn" data-type="Telegram" aria-label="Join Telegram Community">
+              <i class="fab fa-telegram-plane"></i> Telegram <span class="member-count">15K+</span> <span class="btn-spinner"></span>
+            </a>
+            <a href="https://youtube.com/@eleven-11-x?si=RiCY7LrUnTlnCFv0" target="_blank" class="community-btn" data-type="YouTube" aria-label="Visit YouTube Channel">
+              <i class="fab fa-youtube"></i> YouTube <span class="member-count">20K+</span> <span class="btn-spinner"></span>
+            </a>
+          </div>
+          <div class="footer">Your earning journey starts here</div>
+        </div>
+        </div>
+    </div>
+  </div>
+
+  <div id="leaderboard-section" class="hidden">
+    <div class="leaderboard-header">
+      <a href="index.html" class="back-btn" id="back-to-dashboard" aria-label="Back to Dashboard">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h2>Leaderboard</h2> <div style="width: 50px;"></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="daily">Daily</button>
+      <button class="tab-btn" data-tab="weekly">Weekly</button>
+      <button class="tab-btn" data-tab="monthly">Monthly</button>
+    </div>
+    <div class="leaderboard-section-content">
+        <div class="leaderboard-section active" id="daily">
+            <ul class="leaderboard-list" id="daily-leaderboard-list">
+            </ul>
+        </div>
+        <div class="leaderboard-section" id="weekly">
+            <ul class="leaderboard-list" id="weekly-leaderboard-list">
+            </ul>
+        </div>
+        <div class="leaderboard-section" id="monthly">
+            <ul class="leaderboard-list" id="monthly-leaderboard-list">
+            </ul>
+        </div>
+    </div>
+  </div>
+
+  <div class="modal" id="coming-soon-modal">
+    <div class="modal-content">
+      <h3>Coming Soon!</h3>
+      <p>This feature is currently under development. Please check back later!</p>
+      <button id="close-coming-soon-modal" class="modal-close-btn">Got It!</button>
+    </div>
+  </div>
+
+  <script>
+    const G_ID = (id) => document.getElementById(id);
+    const Q_ALL = (selector, parent = document) => parent.querySelectorAll(selector);
+
+    // Helper to add click and keypress listeners for accessibility
+    const addClickAndKeypressListener = (element, handler) => {
+      if (!element) return;
+      element.addEventListener('click', handler);
+      element.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') handler(e);
+      });
+    };
+
+    // Leaderboard Data and Population (moved to top)
+    const maleFirstNames = ['Rahim', 'Karim', 'Akash', 'Sakib', 'Tamim', 'Riad', 'Shanto', 'Fahim', 'Naim', 'Hasan', 'Mostofa', 'Jamal', 'Kamal', 'Babul', 'Mizan', 'Shahid'];
+    const femaleFirstNames = ['Fatema', 'Aisha', 'Nusrat', 'Zara', 'Lamiya', 'Muna', 'Sharmin', 'Rubina', 'Bristy', 'Sumi', 'Khaleda', 'Jahanara', 'Parveen', 'Nasrin', 'Ruma', 'Shapna'];
+    const lastNames = ['Ahmed', 'Khan', 'Chowdhury', 'Islam', 'Hossain', 'Rahman', 'Begum', 'Akter', 'Mia', 'Ali', 'Uddin', 'Sarkar', 'Talukder', 'Bhuiyan', 'Sheikh', 'Molla'];
+
+    const getRandomName = (isFemale, useFullName) => {
+      if (isFemale) {
+        const firstName = femaleFirstNames[Math.floor(Math.random() * femaleFirstNames.length)];
+        if (useFullName && Math.random() < 0.8) {
+          const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+          return `${firstName} ${lastName}`;
+        }
+        return firstName;
+      } else {
+        const firstName = maleFirstNames[Math.floor(Math.random() * maleFirstNames.length)];
+        if (useFullName && Math.random() < 0.8) {
+          const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+          return `${firstName} ${lastName}`;
+        }
+        return firstName;
+      }
+    };
+
+    const populateLeaderboard = (listId, data) => {
+      const listElement = G_ID(listId);
+      if (!listElement) return;
+
+      listElement.innerHTML = ''; // Clear existing items
+
+      data.forEach((item, index) => {
+        const listItem = document.createElement('li');
+        listItem.classList.add('leaderboard-item');
+
+        const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : 'rank-default';
+        listItem.innerHTML = `
+          <div class="rank ${rankClass}">${index + 1}</div>
+          <div class="user-info">
+            <div class="name">${item.name}</div>
+            <div class="amount">৳${item.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+          </div>
+        `;
+        listElement.appendChild(listItem);
+      });
+    };
+
+    const generateLeaderboardData = (count, baseAmount, type) => {
+        const dataKey = `${type}LeaderboardData`;
+        const lastUpdateKey = `${type}LeaderboardLastUpdate`;
+        const now = new Date().getTime();
+        const twentyFourHours = 24 * 60 * 60 * 1000;
+
+        let currentData = [];
+        try {
+            const storedData = localStorage.getItem(dataKey);
+            currentData = storedData ? JSON.parse(storedData) : [];
+        } catch (e) {
+            console.error("Error parsing stored leaderboard data:", e);
+            currentData = [];
+        }
+
+        const lastUpdate = localStorage.getItem(lastUpdateKey);
+
+        if (type === 'daily' && currentData.length > 0 && lastUpdate && (now - parseInt(lastUpdate) < twentyFourHours)) {
+            // Use stored data for daily if less than 24 hours
+            return currentData;
+        }
+
+        const newData = [];
+        for (let i = 0; i < count; i++) {
+            let name, amount;
+            if (currentData[i]) {
+                // If existing user, fluctuate their amount
+                name = currentData[i].name;
+                // Generate a random fluctuation: -10% to +10% of the base amount
+                const fluctuation = (Math.random() * 0.2 - 0.1) * baseAmount;
+                amount = currentData[i].amount + fluctuation;
+                amount = Math.max(50, Math.round(amount)); // Ensure minimum and round
+            } else {
+                // New user if not enough existing data
+                const isFemale = Math.random() < 0.65;
+                const useFullName = Math.random() < 0.60;
+                name = getRandomName(isFemale, useFullName);
+                amount = baseAmount - (i * Math.floor(Math.random() * (baseAmount / 15)));
+                amount = Math.max(50, amount);
+            }
+            newData.push({ name, amount: amount });
+        }
+        newData.sort((a, b) => b.amount - a.amount);
+
+        if (type === 'daily') { // Only persist daily data for 24-hour refresh
+            try {
+                localStorage.setItem(dataKey, JSON.stringify(newData));
+                localStorage.setItem(lastUpdateKey, now.toString());
+            } catch (e) {
+                console.error("Error saving leaderboard data to local storage:", e);
+            }
+        }
+        return newData;
+    };
+
+
+    // Main wrappers for switching between auth and dashboard
+    const authWrapper = G_ID('auth-wrapper');
+    const dashboardMainContent = G_ID('dashboard-main-content');
+    const leaderboardSection = G_ID('leaderboard-section'); // Keep this separate as it overlays
+
+    // Auth elements
+    const authSection = G_ID('auth-section'); // This is auth-section-wrapper now
+    const loginForm = G_ID('login-form');
+    const signupForm = G_ID('signup-form');
+    const showSignupBtn = G_ID('show-signup');
+    const showLoginBtn = G_ID('show-login');
+    const passwordMatchError = G_ID('password-match-error');
+    const loginWhatsappInput = G_ID('login-whatsapp');
+    const loginPasswordInput = G_ID('login-password');
+    const signupWhatsappInput = G_ID('signup-whatsapp');
+    const signupTeamCodeInput = G_ID('signup-team-code');
+    const signupPasswordInput = G_ID('signup-password');
+    const signupConfirmPasswordInput = G_ID('signup-confirm-password');
+
+    // Dashboard elements
+    const mainHeader = G_ID('main-header');
+    const headerTitle = mainHeader.querySelector('.header-title');
+    const homeSection = G_ID('home-section'); // This is a section *within* dashboard-container
+
+    // Coming Soon Modal Elements
+    const comingSoonModal = G_ID('coming-soon-modal');
+    const closeComingSoonModalBtn = G_ID('close-coming-soon-modal');
+    const navAgencyBtn = G_ID('nav-agency-btn');
+    const navWalletBtn = G_ID('nav-wallet-btn');
+    const comingSoonTriggers = Q_ALL('.coming-soon-trigger');
+
+
+    // Function to set login state and toggle views
+    const setLoggedIn = (loggedIn) => {
+        if (loggedIn) {
+            localStorage.setItem('isLoggedIn', 'true');
+            authWrapper.style.display = 'none';
+            dashboardMainContent.style.display = 'flex'; // Show dashboard content
+            document.body.style.justifyContent = 'flex-start'; // Body content starts from top for dashboard
+            // Ensure home section is shown initially after login
+            showDashboardSection('home');
+        } else {
+            localStorage.removeItem('isLoggedIn');
+            authWrapper.style.display = 'flex'; // Show auth forms
+            dashboardMainContent.style.display = 'none'; // Hide dashboard content
+            leaderboardSection.classList.add('hidden'); // Ensure leaderboard is hidden too
+            document.body.style.justifyContent = 'center'; // Center auth forms
+            loginForm.style.display = 'block';
+            signupForm.style.display = 'none';
+            passwordMatchError.style.display = 'none';
+            // Clear input fields on logout
+            loginWhatsappInput.value = '';
+            loginPasswordInput.value = '';
+            signupWhatsappInput.value = '';
+            signupTeamCodeInput.value = '';
+            signupPasswordInput.value = '';
+            signupConfirmPasswordInput.value = '';
+        }
+    };
+
+    // Function to show specific dashboard sections (Home, Leaderboard, etc.)
+    const showDashboardSection = (sectionToShow) => {
+      // Hide all main content areas first
+      homeSection.style.display = 'none';
+      leaderboardSection.classList.add('hidden'); // Hide leaderboard
+
+      // Reset scroll position to top when changing sections
+      window.scrollTo(0, 0);
+
+      // Ensure main header and nav bar are visible for dashboard sections by default
+      mainHeader.style.display = 'flex';
+      Q_ALL('.nav-bar')[0].style.display = 'flex'; // Assuming only one nav-bar
+
+      let pageTitle = 'EARNOVATE';
+      headerTitle.classList.remove('shimmer'); // Remove shimmer by default
+
+      switch (sectionToShow) {
+        case 'home':
+          pageTitle = 'EARNOVATE';
+          headerTitle.classList.add('shimmer'); // Add shimmer back for home
+          homeSection.style.display = 'block';
+          // Re-trigger animations for sections
+          Q_ALL('#home-section .section').forEach(section => {
+            section.classList.remove('animate-in');
+            void section.offsetWidth; // Trigger reflow
+            section.classList.add('animate-in');
+          });
+          break;
+        case 'leaderboard':
+          pageTitle = 'Leaderboard'; // Simplified title
+          leaderboardSection.classList.remove('hidden'); // Show leaderboard
+          // For leaderboard, header and nav bar might behave differently or be replaced
+          // In this setup, the leaderboard has its own header, so main header remains.
+          // Main header title is updated.
+          // When showing leaderboard, make sure to populate daily data with potential fluctuations
+          populateLeaderboard('daily-leaderboard-list', generateLeaderboardData(12, 500, 'daily'));
+          break;
+        case 'agency':
+        case 'submit':
+        case 'wallet':
+        case 'account':
+          // For external links, only update title, no direct section change
+          pageTitle = `Earnovate ${sectionToShow.charAt(0).toUpperCase() + sectionToShow.slice(1)}`;
+          break;
+      }
+      headerTitle.textContent = pageTitle;
+
+      // Update active state for nav buttons
+      Q_ALL('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Q_ALL(`.nav-btn[data-section="${sectionToShow}"]`)[0];
+      if (activeBtn) activeBtn.classList.add('active');
+    };
+
+
+    // Initial load: check login status
+    document.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            setLoggedIn(true);
+        } else {
+            setLoggedIn(false);
+        }
+        // Initialize daily leaderboard amounts on load
+        populateLeaderboard('daily-leaderboard-list', generateLeaderboardData(12, 500, 'daily'));
+        // Generate and populate data for weekly and monthly on load (these don't fluctuate daily, or rather, not affected by the 24hr check)
+        populateLeaderboard('weekly-leaderboard-list', generateLeaderboardData(12, 2500, 'weekly'));
+        populateLeaderboard('monthly-leaderboard-list', generateLeaderboardData(12, 10000, 'monthly'));
+    });
+
+    // Auth Navigation (buttons inside auth forms)
+    addClickAndKeypressListener(showSignupBtn, () => {
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'block';
+        passwordMatchError.style.display = 'none';
+    });
+    addClickAndKeypressListener(showLoginBtn, () => {
+        signupForm.style.display = 'none';
+        loginForm.style.display = 'block';
+        passwordMatchError.style.display = 'none';
+    });
+
+    // Handle Login Form Submission
+    loginForm.querySelector('form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const whatsapp = loginWhatsappInput.value;
+        const password = loginPasswordInput.value;
+
+        if (!whatsapp || !password) {
+            alert('Please enter both WhatsApp number and password.');
+            return;
+        }
+
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+
+        if (storedUser && storedUser.whatsapp === whatsapp && storedUser.password === password) {
+            setLoggedIn(true);
+        } else {
+            alert('Invalid WhatsApp number or password. Please sign up first or check your credentials.');
+        }
+    });
+
+    // Handle Signup Form Submission
+    signupForm.querySelector('form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const whatsapp = signupWhatsappInput.value;
+        const teamCode = signupTeamCodeInput.value;
+        const password = signupPasswordInput.value;
+        const confirmPassword = signupConfirmPasswordInput.value;
+
+        if (password !== confirmPassword) {
+            passwordMatchError.style.display = 'block';
+            return;
+        } else {
+            passwordMatchError.style.display = 'none';
+        }
+
+        if (!whatsapp || !password || !confirmPassword) {
+            alert('Please fill in all required fields (WhatsApp number and password).');
+            return;
+        }
+
+        // Check if user already exists (simple check, can be improved)
+        const storedUser = localStorage.getItem('user');
+        if (storedUser && JSON.parse(storedUser).whatsapp === whatsapp) {
+            alert('An account with this WhatsApp number already exists. Please log in.');
+            return;
+        }
+
+
+        const userData = {
+            whatsapp: whatsapp,
+            password: password,
+            teamCode: teamCode
+        };
+        localStorage.setItem('user', JSON.stringify(userData));
+
+        setLoggedIn(true);
+    });
+
+    // Dashboard Navigation (buttons in the nav bar)
+    Q_ALL('.nav-btn').forEach(btn => {
+      if (btn.tagName === 'BUTTON') { // For Home button
+        addClickAndKeypressListener(btn, () => showDashboardSection(btn.dataset.section || 'home'));
+      } else if (btn.tagName === 'A') { // For links like Agency, Wallet etc.
+        btn.addEventListener('click', (e) => {
+            // Update the active state for the nav button even for external links
+            Q_ALL('.nav-btn').forEach(navBtn => navBtn.classList.remove('active'));
+            btn.classList.add('active');
+            headerTitle.textContent = `Earnovate ${btn.dataset.section.charAt(0).toUpperCase() + btn.dataset.section.slice(1)}`;
+            // Let the default link behavior continue for external links, unless it's a "Coming Soon" button
+        });
+      }
+    });
+
+    // Coming Soon Modal Logic
+    const showComingSoonModal = (e) => {
+        e.preventDefault(); // Prevent navigation
+        comingSoonModal.classList.add('active');
+    };
+
+    // Attach Coming Soon to relevant nav links
+    addClickAndKeypressListener(navAgencyBtn, showComingSoonModal);
+    addClickAndKeypressListener(navWalletBtn, showComingSoonModal);
+
+    // Attach "Coming Soon" to specific work items by class
+    comingSoonTriggers.forEach(trigger => {
+        addClickAndKeypressListener(trigger, showComingSoonModal);
+    });
+
+    addClickAndKeypressListener(closeComingSoonModalBtn, () => {
+        comingSoonModal.classList.remove('active');
+    });
+    comingSoonModal.addEventListener('click', (e) => {
+      if (e.target === comingSoonModal) {
+        comingSoonModal.classList.remove('active');
+      }
+    });
+
+
+    // Leaderboard Toggle
+    // The leaderboard-toggle button should now just call showDashboardSection
+    addClickAndKeypressListener(G_ID('leaderboard-toggle'), () => showDashboardSection('leaderboard'));
+    // The back-to-dashboard button is now an anchor tag, so its href handles navigation.
+    // We can still add a click listener to ensure smooth state handling if needed,
+    // but the primary navigation is handled by the href.
+    addClickAndKeypressListener(G_ID('back-to-dashboard'), (e) => {
+        // Prevent default anchor behavior if we want to handle it purely with JS for SPAs,
+        // but for a simple redirect, letting the href work is fine.
+        // e.preventDefault();
+        showDashboardSection('home');
+    });
+
+
+    // Poster Slider
+    let slideIndex = 0;
+    const slides = Q_ALL('.slider-item', G_ID('poster-slider'));
+    const dotsContainer = G_ID('slider-dots');
+
+    if (dotsContainer) dotsContainer.innerHTML = ''; // Clear existing dots on load
+
+    slides.forEach((_, index) => {
+      const dot = document.createElement('div');
+      dot.classList.add('slider-dot');
+      if (index === 0) dot.classList.add('active');
+      dot.setAttribute('aria-label', `Slide ${index + 1}`);
+      addClickAndKeypressListener(dot, () => {
+        slideIndex = index;
+        showSlide();
+        resetAutoSlide();
+      });
+      dotsContainer.appendChild(dot);
+    });
+
+    const dots = Q_ALL('.slider-dot', dotsContainer);
+
+    const showSlide = (direction = 0) => {
+      slides.forEach(slide => slide.classList.remove('active'));
+      dots.forEach(dot => dot.classList.remove('active'));
+      slideIndex = (slideIndex + direction + slides.length) % slides.length;
+      slides[slideIndex].classList.add('active');
+      dots[slideIndex].classList.add('active');
+    };
+
+    slides.forEach((slide, index) => {
+      const img = slide.querySelector('img');
+      const spinner = slide.querySelector('.loading-spinner');
+      if (spinner) spinner.style.display = 'block';
+      if (img) {
+        img.onload = () => { if (spinner) spinner.style.display = 'none'; };
+        img.onerror = () => { if (spinner) spinner.style.display = 'none'; }; // Hide spinner even on error
+      }
+    });
+
+    let autoSlideInterval = setInterval(() => showSlide(1), 6000); // 6 seconds
+    const resetAutoSlide = () => {
+      clearInterval(autoSlideInterval);
+      autoSlideInterval = setInterval(() => showSlide(1), 6000);
+    };
+
+    let startX, startY, isDragging = false;
+    const posterSlider = G_ID('poster-slider');
+    if (posterSlider) {
+        posterSlider.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startX = e.touches[0].pageX;
+            startY = e.touches[0].pageY;
+            clearInterval(autoSlideInterval);
+        }, { passive: true });
+        posterSlider.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            // Prevent vertical scrolling interference, but allow horizontal drag
+            const currentX = e.touches[0].pageX;
+            const currentY = e.touches[0].pageY;
+            const diffX = Math.abs(startX - currentX);
+            const diffY = Math.abs(startY - currentY);
+            if (diffX > diffY) { // Prioritize horizontal movement
+                e.preventDefault(); // Prevent default vertical scroll
+            }
+        }, { passive: false }); // Changed to passive: false for e.preventDefault()
+        posterSlider.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            const endX = e.changedTouches[0].pageX;
+            const diffX = startX - endX;
+            if (Math.abs(diffX) > 50) showSlide(diffX > 0 ? 1 : -1);
+            resetAutoSlide();
+        });
+    }
+
+    Q_ALL('.community-btn').forEach(btn => {
+      addClickAndKeypressListener(btn, (e) => {
+        const spinner = btn.querySelector('.btn-spinner');
+        if (spinner) spinner.style.display = 'block';
+        setTimeout(() => {
+          if (spinner) spinner.style.display = 'none';
+        }, 800);
+      });
+    });
+
+    // Leaderboard Tabs
+    const leaderboardTabs = Q_ALL('.leaderboard-section', leaderboardSection);
+    Q_ALL('.tab-btn', G_ID('leaderboard-section')).forEach(button => {
+      addClickAndKeypressListener(button, () => {
+        Q_ALL('.tab-btn', G_ID('leaderboard-section')).forEach(btn => btn.classList.remove('active'));
+        leaderboardTabs.forEach(section => section.classList.remove('active'));
+        button.classList.add('active');
+        G_ID(button.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Scroll Indicator
+    window.addEventListener('scroll', () => {
+      const scrollIndicator = Q_ALL('.scroll-indicator')[0];
+      // Only update scroll indicator if dashboard content is visible and leaderboard is hidden
+      if (dashboardMainContent.style.display === 'flex' && scrollIndicator && leaderboardSection.classList.contains('hidden')) {
+          const scrollTop = document.documentElement.scrollTop;
+          const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+          const scrolled = (scrollTop / scrollHeight) * 100;
+          scrollIndicator.style.transform = `scaleX(${scrolled / 100})`;
+      } else if (scrollIndicator) {
+          scrollIndicator.style.transform = `scaleX(0)`; // Hide if not on dashboard home
+      }
+    });
+
+  </script>
+
+<footer style="background:#222; color:white; text-align:center; padding:15px; margin-top:20px;">
+  <p>&copy; 2025 Takoven. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>

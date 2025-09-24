@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELEVEN Wallet</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff2d55; /* Red */
+      --secondary: #00c4ff; /* Blue */
+      --dark: #1a1a1a;
+      --light: #ffffff;
+      --light-80: #f5f5f5;
+      --glass-bg: rgba(255, 255, 255, 0.2);
+      --glass-blur: blur(15px);
+      --shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      --neon-shadow: 0 0 10px rgba(255, 45, 85, 0.2);
+      --golden: #B89736;
+      --golden-shadow: 0 0 10px rgba(184, 151, 54, 0.5);
+      --transition: all 0.3s ease;
+      --radius: 12px;
+      --font-stack: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --wallet-primary: #3b82f6;
+      --wallet-secondary: #60a5fa;
+      --wallet-red: #ef4444;
+      --wallet-green: #10b981;
+      --wallet-orange: #d97706;
+      --wallet-dark-60: rgba(0, 0, 0, 0.6);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-stack); }
+    body {
+      background: linear-gradient(135deg, var(--light), hsl(200, 80%, 90%));
+      color: var(--dark);
+      width: 100%;
+      padding: 0;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      touch-action: pan-y;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 80px; /* Add padding to body to prevent content being hidden by nav-bar */
+    }
+    .container {
+      flex-grow: 1;
+      padding: 20px 10px; /* Adjusted padding */
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    #wallet-page-container {
+      width: 100%;
+      background: var(--light); /* Ensure background is light */
+      overflow-y: auto;
+      display: block; /* Always display block as it's the only page */
+      box-sizing: border-box;
+      padding: 0px 10px; /* Adjusted padding */
+      flex-grow: 1; /* Allow it to take up available space */
+    }
+    #wallet-page-container .container {
+      padding-top: 0;
+      padding-bottom: 0;
+      max-width: 420px;
+      margin: auto;
+      display: block;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+    #wallet-page-container .app-title { font-size: 26px; font-weight: 700; margin-bottom: 20px; position: relative; color: var(--dark); }
+    #wallet-page-container .app-title::after {
+      content: ''; position: absolute; bottom: -6px; left: 0; width: 50px; height: 3px;
+      background: linear-gradient(90deg, var(--wallet-primary), var(--wallet-secondary));
+      border-radius: 3px;
+    }
+    #wallet-page-container .balance-card {
+      background: linear-gradient(135deg, var(--wallet-primary), var(--wallet-secondary));
+      color: white; border-radius: var(--radius); padding: 20px;
+      margin-bottom: 15px; box-shadow: var(--shadow); transition: var(--transition);
+    }
+    #wallet-page-container .balance-card:hover { transform: translateY(-3px); }
+    #wallet-page-container .balance-title { font-size: 14px; font-weight: 500; opacity: 0.9; display: flex; align-items: center; margin-bottom: 8px; }
+    #wallet-page-container .balance-title i { margin-right: 8px; }
+    #wallet-page-container .balance-amount { font-size: 32px; font-weight: 700; }
+    #wallet-page-container .balance-details {
+      display: grid; grid-template-columns: 1fr 1fr; font-size: 12px;
+      opacity: 0.85; margin-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 12px; gap: 8px;
+    }
+    #wallet-page-container .wallet-tabs { display: flex; background-color: var(--light-80); border-radius: var(--radius); padding: 4px; margin-bottom: 15px; }
+    #wallet-page-container .wallet-tab {
+      flex: 1; text-align: center; padding: 12px; font-weight: 500;
+      border-radius: calc(var(--radius) - 2px); cursor: pointer;
+      transition: var(--transition); touch-action: manipulation;
+      outline: none; /* Removed default outline */
+    }
+    #wallet-page-container .wallet-tab:focus-visible { /* Custom focus outline */
+        outline: 2px solid var(--wallet-primary);
+        outline-offset: 2px;
+    }
+    #wallet-page-container .wallet-tab.active { background-color: white; color: var(--wallet-primary); box-shadow: var(--shadow); }
+    #wallet-page-container .wallet-tab:hover { background-color: var(--light); }
+    #wallet-page-container .wallet-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
+    #wallet-page-container .wallet-card {
+      background: white; border-radius: var(--radius); padding: 16px;
+      text-align: center; box-shadow: var(--shadow); transition: var(--transition);
+    }
+    #wallet-page-container .wallet-card:hover { transform: translateY(-4px); }
+    #wallet-page-container .wallet-card.active { border: 2px solid var(--wallet-primary); }
+    #wallet-page-container .wallet-amount { font-size: 18px; font-weight: 700; margin: 6px 0; }
+    #wallet-page-container .wallet-name { font-size: 12px; font-weight: 500; color: var(--wallet-dark-60); }
+    #wallet-page-container .wallet-percentage {
+      font-size: 10px; color: var(--wallet-primary); background: rgba(59, 130, 246, 0.1);
+      padding: 2px 8px; border-radius: 10px; display: inline-block;
+    }
+    #wallet-page-container .wallet-actions button {
+      flex: 1; padding: 14px; font-weight: 600; border: none;
+      border-radius: var(--radius); cursor: pointer; box-shadow: var(--shadow);
+      transition: var(--transition); font-size: 16px; touch-action: manipulation;
+      outline: none; /* Removed default outline */
+    }
+    #wallet-page-container .wallet-actions { display: flex; gap: 12px; margin-bottom: 15px; }
+    #wallet-page-container .wallet-actions button:focus-visible { /* Custom focus outline */
+        outline: 2px solid var(--wallet-primary);
+        outline-offset: 2px;
+    }
+    #wallet-page-container .wallet-actions button.add { background: var(--wallet-primary); color: white; }
+    #wallet-page-container .wallet-actions button.withdraw { background: var(--wallet-secondary); color: var(--dark); }
+    #wallet-page-container .wallet-actions button:hover { transform: scale(1.02); }
+    #wallet-page-container .page-header {
+      display: flex; align-items: center; background: white;
+      padding: 10px; border-radius: var(--radius); box-shadow: var(--shadow);
+      margin-bottom: 15px; position: sticky; top: 0; z-index: 10;
+    }
+    #wallet-page-container .page-header .back-btn {
+      color: var(--wallet-primary); font-size: 20px; cursor: pointer; padding: 10px;
+      transition: var(--transition); touch-action: manipulation; background: none;
+      border: none; box-shadow: none; margin: 0; width: auto; height: auto; border-radius: 0;
+      outline: none; /* Removed default outline */
+    }
+    #wallet-page-container .page-header .back-btn:focus-visible { /* Custom focus outline */
+        outline: 2px solid var(--wallet-primary);
+        outline-offset: 2px;
+    }
+    #wallet-page-container .page-header .back-btn:hover { color: #1e40af; transform: scale(1.1); }
+    #wallet-page-container .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      flex-grow: 1;
+      text-align: center;
+      min-width: 120px; /* Give it a minimum width */
+    }
+    #wallet-page-container .options { display: flex; justify-content: space-between; margin-bottom: 15px; }
+    #wallet-page-container .option-btn {
+      flex: 1; padding: 12px; text-align: center; background-color: white;
+      border: 2px solid var(--light-80); border-radius: var(--radius);
+      cursor: pointer; font-size: 15px; font-weight: 500; transition: var(--transition);
+      margin: 0 5px; box-shadow: var(--shadow); touch-action: manipulation;
+      outline: none; /* Removed default outline */
+    }
+    #wallet-page-container .option-btn:focus-visible { /* Custom focus outline */
+        outline: 2px solid var(--wallet-primary);
+        outline-offset: 2px;
+    }
+    #wallet-page-container .option-btn.active { background: linear-gradient(45deg, var(--wallet-primary), var(--wallet-secondary)); color: white; border-color: var(--wallet-primary); }
+    #wallet-page-container .option-btn:hover { background-color: var(--light); transform: translateY(-2px); }
+    #wallet-page-container .wallet-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; padding-right: 5px; }
+    #wallet-page-container .add-btn {
+      display: flex; justify-content: center; align-items: center;
+      background-color: white; border: 2px dashed var(--wallet-dark-60);
+      border-radius: 8px; padding: 16px; font-size: 16px;
+      color: var(--wallet-dark-60); cursor: pointer; transition: var(--transition);
+      box-shadow: var(--shadow); touch-action: manipulation; gap: 8px;
+      outline: none; /* Removed default outline */
+    }
+    #wallet-page-container .add-btn:focus-visible { /* Custom focus outline */
+        outline: 2px solid var(--wallet-primary);
+        outline-offset: 2px;
+    }
+    #wallet-page-container .add-btn i { font-size: 20px; }
+    #wallet-page-container .add-btn:hover { transform: scale(1.05); border-color: var(--wallet-primary); color: var(--wallet-primary); }
+    #wallet-page-container .saved-wallet {
+      display: flex; align-items: center; background: white;
+      border: 1px solid var(--light-80); border-radius: var(--radius);
+      padding: 12px 16px; box-shadow: var(--shadow); cursor: pointer;
+      transition: var(--transition); touch-action: manipulation; justify-content: space-between;
+      outline: none; /* Removed default outline */
+    }
+    #wallet-page-container .saved-wallet:focus-visible { /* Custom focus outline for the whole card */
+        outline: 2px solid var(--wallet-primary);
+        outline-offset: 2px;
+    }
+    #wallet-page-container .saved-wallet:hover { transform: translateY(-3px); border-color: var(--wallet-primary); }
+    #wallet-page-container .saved-wallet.selected { border-color: var(--wallet-primary); background: rgba(59, 130, 246, 0.05); }
+    #wallet-page-container .saved-wallet .wallet-icon {
+      width: 40px; height: 40px; background: linear-gradient(135deg, var(--wallet-primary), var(--wallet-secondary));
+      border-radius: 50%; display: flex; justify-content: center; align-items: center;
+      color: white; font-size: 20px; font-weight: 700; margin-right: 15px; flex-shrink: 0;
+    }
+    #wallet-page-container .saved-wallet .wallet-icon.Bkash { background: linear-gradient(135deg, #d81b60, #ec4899); }
+    #wallet-page-container .saved-wallet .wallet-details { display: flex; flex-direction: column; flex-grow: 1; }
+    #wallet-page-container .saved-wallet .wallet-details span:first-child { font-weight: 600; font-size: 16px; color: var(--dark); }
+    #wallet-page-container .saved-wallet .wallet-details span:last-child { font-size: 13px; color: var(--wallet-dark-60); margin-top: 3px; }
+    #wallet-page-container .delete-btn {
+      color: var(--wallet-red); font-size: 16px; cursor: pointer; padding: 8px;
+      transition: var(--transition); touch-action: manipulation; flex-shrink: 0;
+      outline: none; /* Removed default outline */
+    }
+    #wallet-page-container .delete-btn:focus-visible { /* Custom focus outline */
+        outline: 2px solid var(--wallet-red);
+        outline-offset: 2px;
+        border-radius: 50%;
+    }
+    #wallet-page-container .delete-btn:hover { color: #b91c1c; transform: scale(1.1); }
+    #wallet-page-container .withdraw-section {
+      background-color: white; border-radius: var(--radius); padding: 20px;
+      text-align: center; box-shadow: var(--shadow); margin-bottom: 15px;
+    }
+    #wallet-page-container .withdraw-input-container { position: relative; margin-bottom: 10px; }
+    #wallet-page-container .withdraw-input {
+      display: flex;
+      align-items: center;
+      background-color: var(--light-80);
+      border: 1px solid var(--light-80);
+      border-radius: 25px;
+      padding: 12px 15px;
+      transition: var(--transition);
+      width: 100%; /* Ensure it takes full width */
+      box-sizing: border-box; /* Include padding and border in element's total width */
+    }
+    #wallet-page-container .withdraw-input:hover { border-color: var(--wallet-primary); }
+    #wallet-page-container .withdraw-input .currency { font-size: 18px; color: var(--wallet-primary); font-weight: 600; white-space: nowrap; }
+    #wallet-page-container .withdraw-input input {
+      flex: 1; border: none; background: transparent; font-size: 18px;
+      color: var(--wallet-primary); font-weight: 600; outline: none; margin-left: 5px; text-align: left;
+      min-width: 0; /* Allow input to shrink if text is too long */
+    }
+    #wallet-page-container .withdraw-input input::placeholder { color: var(--wallet-dark-60); opacity: 0.6; }
+    #wallet-page-container .all-btn-container { position: absolute; top: 50%; right: 15px; transform: translateY(-50%); }
+    #wallet-page-container .all-btn {
+      background-color: white; border: 1px solid var(--wallet-primary);
+      color: var(--wallet-primary); border-radius: 8px;
+      padding: 6px 12px; font-size: 12px; cursor: pointer;
+      transition: var(--transition); font-weight: 500; touch-action: manipulation;
+      outline: none; /* Removed default outline */
+    }
+    #wallet-page-container .all-btn:focus-visible { /* Custom focus outline */
+        outline: 2px solid var(--wallet-primary);
+        outline-offset: 2px;
+    }
+    #wallet-page-container .all-btn:hover { background-color: var(--wallet-primary); color: white; transform: translateY(-1px); }
+    #wallet-page-container .withdraw-section p { font-size: 14px; color: var(--wallet-dark-60); margin-bottom: 15px; }
+   
+    #wallet-page-container .withdraw-btn {
+      background: linear-gradient(45deg, var(--wallet-primary), var(--wallet-secondary));
+      color: white; border: none; padding: 14px; border-radius: 25px;
+      width: 100%; font-size: 16px; font-weight: 600; cursor: pointer;
+      transition: var(--transition); box-shadow: var(--shadow); touch-action: manipulation;
+      outline: none; /* Removed default outline */
+    }
+    #wallet-page-container .withdraw-btn:focus-visible { /* Custom focus outline */
+        outline: 2px solid var(--wallet-primary);
+        outline-offset: 2px;
+    }
+    #wallet-page-container .withdraw-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3); }
+    #wallet-page-container .info {
+      background-color: white; border-radius: var(--radius); padding: 20px;
+      box-shadow: var(--shadow); margin-bottom: 15px;
+    }
+    #wallet-page-container .info ul { list-style: none; }
+    #wallet-page-container .info ul li { font-size: 14px; color: var(--wallet-dark-60); margin-bottom: 12px; line-height: 1.7; }
+    #wallet-page-container .info ul li:before { content: "•"; color: var(--wallet-primary); margin-right: 8px; }
+    #wallet-page-container .transactions, #wallet-page-container .history {
+      background-color: white; border-radius: var(--radius); padding: 15px; box-shadow: var(--shadow);
+    }
+    #wallet-page-container .transactions h3, #wallet-page-container .history h4 { font-size: 16px; font-weight: 600; color: var(--dark); margin-bottom: 15px; }
+    #wallet-page-container .history-list-container { max-height: 300px; overflow-y: auto; padding-right: 5px; scroll-behavior: smooth; }
+    #wallet-page-container .history-list-container::-webkit-scrollbar { width: 6px; }
+    #wallet-page-container .history-list-container::-webkit-scrollbar-track { background: var(--light-80); border-radius: 10px; }
+    #wallet-page-container .history-list-container::-webkit-scrollbar-thumb { background: var(--wallet-primary); border-radius: 10px; }
+    #wallet-page-container .history-list-container::-webkit-scrollbar-thumb:hover { background: #1e40af; }
+    #wallet-page-container .transaction-item, #wallet-page-container .history-item {
+      display: flex; justify-content: space-between; align-items: center;
+      background-color: var(--light-80); border-radius: 10px;
+      padding: 12px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+      outline: none; /* Removed default outline */
+    }
+    #wallet-page-container .transaction-item:focus-visible, #wallet-page-container .history-item:focus-visible { /* Custom focus outline */
+        outline: 2px solid var(--wallet-primary);
+        outline-offset: 2px;
+    }
+    #wallet-page-container .transaction-item:hover, #wallet-page-container .history-item:hover { transform: translateY(-2px); }
+    #wallet-page-container .history-details { display: flex; flex-direction: column; }
+    #wallet-page-container .history-details .date-time { font-size: 12px; color: var(--wallet-dark-60); margin-bottom: 5px; }
+    #wallet-page-container .history-details .amount
+ { font-size: 15px; font-weight: 600; color: var(--dark); }
+    #wallet-page-container .history-details .wallet-type { font-size: 12px; color: var(--wallet-primary); }
+    #wallet-page-container .history-status { font-size: 12px; padding: 5px 10px; border-radius: 15px; font-weight: 500; }
+    #wallet-page-container .history-status.pending { background-color: #fefcbf; color: var(--wallet-orange); }
+    #wallet-page-container .history-status.completed { background-color: #d1fae5; color: var(--wallet-green); }
+    #wallet-page-container .history-status.rejected { background-color: #fee2e2; color: var(--wallet-red); }
+    #wallet-page-container .transaction-item span.amount.in { color: var(--wallet-green); font-weight: bold; }
+    #wallet-page-container .transaction-item span.amount.out { color: var(--wallet-red); font-weight: bold; }
+    #wallet-page-container .transaction-empty, #wallet-page-container .history-empty { font-size: 14px; color: var(--wallet-dark-60); text-align: center; line-height: 1.5; }
+    #wallet-page-container .all-history-btn {
+      background: linear-gradient(45deg, var(--wallet-primary), var(--wallet-secondary));
+      color: white; border: none; padding: 10px; border-radius: 25px;
+      width: 100%; font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: var(--transition); box-shadow: var(--shadow); margin-top: 10px; touch-action: manipulation;
+      outline: none; /* Removed default outline */
+    }
+    #wallet-page-container .all-history-btn:focus-visible { /* Custom focus outline */
+        outline: 2px solid var(--wallet-primary);
+        outline-offset: 2px;
+    }
+    #wallet-page-container .all-history-btn:hover { transform: translateY(-2px); }
+    #wallet-page-container #wallet-page, #wallet-page-container #withdraw-page, #wallet-page-container #add-wallet-page { display: none; /* min-height: calc(100vh - 40px); */ }
+    #wallet-page-container #wallet-page.active-page, #wallet-page-container #withdraw-page.active-page, #wallet-page-container #add-wallet-page.active-page { display: block; }
+    #wallet-page-container #add-wallet-page {
+      position: absolute; top: 0; left: 0; width: 100%; min-height: 100%;
+      background-color: var(--light); padding: 20px; overflow-y: auto;
+    }
+    #wallet-page-container .add-wallet-header {
+      display: flex; align-items: center; background: white;
+      padding: 10px; border-radius: var(--radius); box-shadow: var(--shadow);
+      margin-bottom: 20px; position: sticky; top: 0; z-index: 10;
+    }
+    #wallet-page-container .form-group { margin-bottom: 20px; }
+    #wallet-page-container .form-group label { display: block; font-size: 15px; font-weight: 500; margin-bottom: 8px; color: var(--dark); }
+    #wallet-page-container .form-group select, #wallet-page-container .form-group input {
+      width: 100%; padding: 12px; border: 1px solid var(--light-80);
+      border-radius: 8px; font-size: 15px; transition: border-color 0.3s ease;
+      outline: none; /* Removed default outline */
+    }
+    #wallet-page-container .form-group select:focus-visible, #wallet-page-container .form-group input:focus-visible {
+      border-color: var(--wallet-primary); outline: 2px solid rgba(59, 130, 246, 0.2); /* Adjusted for better visibility */
+    }
+    #wallet-page-container .save-btn {
+      background: linear-gradient(45deg, var(--wallet-primary), var(--wallet-secondary));
+      color: white; border: none; padding: 14px; border-radius: 25px;
+      width: 100%; font-size: 16px; font-weight: 600; cursor: pointer;
+      transition: var(--transition); box-shadow: var(--shadow); touch-action: manipulation;
+      outline: none; /* Removed default outline */
+    }
+    #wallet-page-container .save-btn:focus-visible { /* Custom focus outline */
+        outline: 2px solid var(--wallet-primary);
+        outline-offset: 2px;
+    }
+    #wallet-page-container .save-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3); }
+    #wallet-page-container .error-message { color: var(--wallet-red); font-size: 14px; margin-top: 5px; display: none; }
+    @media (max-width: 400px) {
+      .container { padding: 15px 5px; } /* Adjusted padding */
+      #wallet-page-container .balance-amount { font-size: 28px; } #wallet-page-container .wallet-grid { grid-template-columns: 1fr; }
+      #wallet-page-container .option-btn { font-size: 13px; padding: 10px; }
+      #wallet-page-container .withdraw-input { padding: 10px 12px; }
+      #wallet-page-container .withdraw-input .currency, #wallet-page-container .withdraw-input input { font-size: 16px; } /* Adjusted for smaller screens */
+      #wallet-page-container .all-btn { padding: 4px 8px; font-size: 11px; }
+      #wallet-page-container .withdraw-btn, #wallet-page-container .all-history-btn, #wallet-page-container .save-btn { font-size: 15px; padding: 12px; }
+      #wallet-page-container .history-item, #wallet-page-container .transaction-item { padding: 10px; }
+      #wallet-page-container .history-details .amount { font-size: 14px; }
+      #wallet-page-container .saved-wallet .wallet-icon { width: 35px; height: 35px; font-size: 16px; }
+      #wallet-page-container .saved-wallet .wallet-details span:first-child { font-size: 14px; }
+      #wallet-page-container .saved-wallet .wallet-details span:last-child { font-size: 12px; }
+      #wallet-page-container .history-list-container { max-height: 250px; }
+      #wallet-page-container .add-btn { padding: 12px; font-size: 14px; }
+      #wallet-page-container .delete-btn { font-size: 14px; padding: 6px; }
+      #wallet-page-container .page-title { font-size: 18px; }
+      .modal-content { padding: 20px; } /* Slightly less padding for smaller modals */
+      .modal-content h3 { font-size: 18px; }
+      .modal-content p { font-size: 14px; }
+      .modal-content button { padding: 8px 15px; font-size: 14px; }
+    }
+    @media (max-width: 320px) {
+      .container { padding: 10px 5px; } /* Adjusted padding */
+      #wallet-page-container .withdraw-btn, #wallet-page-container .all-history-btn, #wallet-page-container .save-btn { font-size: 14px; padding: 10px; }
+      #wallet-page-container .page-title { font-size: 16px; }
+      #wallet-page-container .balance-card { padding: 15px; } /* Reduce padding on balance card */
+      #wallet-page-container .balance-amount { font-size: 24px; } /* Smaller font for balance */
+      #wallet-page-container .wallet-tabs, #wallet-page-container .wallet-actions { gap: 8px; } /* Smaller gaps */
+      #wallet-page-container .wallet-actions button { padding: 10px; font-size: 14px; } /* Smaller buttons */
+      #wallet-page-container .info ul li { font-size: 13px; } /* Smaller info text */
+    }
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1000; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      align-items: center; /* Center vertically */
+      justify-content: center; /* Center horizontally */
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 25px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: 90%; /* Responsive width */
+      max-width: 350px; /* Max width for larger screens */
+      text-align: center;
+      position: relative;
+      transform: scale(0.95);
+      animation: modalAppear 0.2s ease-out forwards;
+    }
+    @keyframes modalAppear {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    ._modal-content h3 {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: var(--dark);
+    }
+    .modal-content p {
+      font-size: 15px;
+      color: var(--wallet-dark-60);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .modal-content button {
+      background: var(--wallet-primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: var(--transition);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      outline: none; /* Removed default outline */
+    }
+    .modal-content button:focus-visible { /* Custom focus outline */
+        outline: 2px solid var(--wallet-primary);
+        outline-offset: 2px;
+    }
+    .modal-content button:hover {
+      background: var(--wallet-secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    .nav-bar {
+      position: fixed; bottom: 0; left: 0; width: 100%;
+      background: var(--light); padding: 10px 15px;
+      display: flex; justify-content: space-around; align-items: center;
+      box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.2); z-index: 1000;
+      border-top: 2px solid rgba(0, 0, 0, 0.1); backdrop-filter: var(--glass-blur);
+    }
+    .nav-btn {
+      background: none; border: none; color: var(--dark); font-size: 12px;
+      font-weight: 600; cursor: pointer; padding: 10px;
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      transition: var(--transition); width: 60px; height: 60px; overflow: hidden;
+      text-decoration: none; /* For <a> tags */
+      outline: none; /* IMPORTANT: Removed default outline here */
+    }
+    .nav-btn:focus-visible {
+      color: var(--primary);
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+      border-radius: 5px; /* So outline doesn't look badmachines square elements */
+    }
+    .nav-btn:hover {
+      color: var(--primary);
+      transform: translateY(-5px);
+    }
+    .nav-btn.active {
+      color: var(--primary);
+      transform: translateY(0); /* Ensure no upward shift for selected buttons */
+    }
+    .nav-btn:hover i, .nav-btn:focus-visible i { /* apply text-shadow also to focus-visible */
+      text-shadow: 0 0 10px rgba(255, 45, 85, 0.4);
+    }
+    .nav-btn.submit-btn {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: var(--light); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      width: 70px; height: 70px; padding: 0;
+      display: flex; justify-content: center; align-items: center;
+      box-shadow: 0 5px 15px rgba(255, 45, 85, 0.3), 0 0 20px rgba(0, 196, 255, 0.3);
+      transform: translateY(-25px); transition: var(--transition);
+      outline: none; /* Removed default outline */
+    }
+    .nav-btn.submit-btn:focus-visible {
+      transform: translateY(-30px) scale(1.1);
+      box-shadow: 0 10px 20px rgba(255, 45, 85, 0.4), 0 0 30px rgba(0, 196, 255, 0.4);
+      outline: 2px solid var(--primary); /* Added outline on focus */
+      outline-offset: 2px;
+      border-radius: 50%; /* Make outline circular for this button */
+    }
+    .nav-btn.submit-btn:hover {
+      transform: translateY(-30px) scale(1.1);
+      box-shadow: 0 10px 20px rgba(255, 45, 85, 0.4), 0 0 30px rgba(0, 196, 255, 0.4);
+    }
+    @media (max-width: 400px) {
+      .nav-bar { padding: 8px 10px; }
+      .nav-btn { font-size: 11px; padding: 8px; width: 55px; height: 55px; }
+      .nav-btn i { font-size: 18px; }
+      .nav-btn.submit-btn { width: 60px; height: 60px; transform: translateY(-12px); }
+      .nav-btn.submit-btn i { font-size: 22px; }
+    }
+    @media (max-width: 320px) {
+      .nav-btn { width: 50px; height: 50px; font-size: 10px; }
+      .nav-btn i { font-size: 16px; }
+      .nav-btn.submit-btn { width: 55px; height: 55px; transform: translateY(-10px); }
+      .nav-btn.submit-btn i { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav style="background:#222; padding:10px;">
+  <ul style="list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap;">
+    <li style="margin:0 10px;"><a href="index.html" style="color:white; text-decoration:none;">Home</a></li>
+    <li style="margin:0 10px;"><a href="account.html" style="color:white; text-decoration:none;">Account</a></li>
+    <li style="margin:0 10px;"><a href="wallet.html" style="color:white; text-decoration:none;">Wallet</a></li>
+    <li style="margin:0 10px;"><a href="smm.html" style="color:white; text-decoration:none;">SMM</a></li>
+    <li style="margin:0 10px;"><a href="gmail.html" style="color:white; text-decoration:none;">Gmail</a></li>
+    <li style="margin:0 10px;"><a href="tiktop.html" style="color:white; text-decoration:none;">TikTok</a></li>
+    <li style="margin:0 10px;"><a href="getlike.html" style="color:white; text-decoration:none;">GetLike</a></li>
+    <li style="margin:0 10px;"><a href="center.html" style="color:white; text-decoration:none;">Center</a></li>
+  </ul>
+</nav>
+
+  <div class="scroll-indicator"></div>
+  <div id="wallet-page-container">
+    <div class="container">
+      <div id="wallet-page" class="active-page">
+        <h1 class="app-title">Wallet</h1>
+        <div class="balance-card">
+          <div class="balance-title"><i class="fas fa-wallet"></i>Total Balance</div>
+          <div class="balance-amount" id="wallet-total-balance">৳0.00</div>
+          <div class="balance-details">
+            <span>Basic Balance</span>
+            <span id="wallet-basic-balance">৳0.00</span>
+            <span>Referral Balance</span>
+            <span id="wallet-referral-balance">৳0.00</span>
+          </div>
+        </div>
+        <div class="wallet-tabs">
+          <div class="wallet-tab active" data-tab="basic">Basic</div>
+          <div class="wallet-tab" data-tab="referral">Referral</div>
+        </div>
+        <div class="wallet-grid">
+          <div class="wallet-card active" data-tab="basic">
+            <div class="wallet-amount" id="wallet-card-basic">৳0.00</div>
+            <div class="wallet-name">Basic Wallet</div>
+          </div>
+          <div class="wallet-card" data-tab="referral">
+            <div class="wallet-percentage">Bonus</div>
+            <div class="wallet-amount" id="wallet-card-referral">৳0.00</div>
+            <div class="wallet-name">Referral</div>
+          </div>
+        </div>
+        <div class="wallet-actions">
+          <button class="add" id="add-funds-btn">Add Funds</button>
+          <button class="withdraw" id="withdraw-nav-btn-wallet">Withdraw</button>
+        </div>
+        <div class="transactions">
+          <h3>Recent Transactions</h3>
+          <div class="history-list-container" id="wallet-transaction-list">
+            <p class="transaction-empty">No recent transactions.</p>
+          </div>
+          <button class="all-history-btn" id="wallet-all-transactions-btn" style="display: none;">All Transactions</button>
+        </div>
+      </div>
+      <div id="withdraw-page">
+        <div class="page-header">
+          <i class="fas fa-arrow-left back-btn" id="withdraw-back-btn-wallet"></i>
+          <h2 class="page-title">Withdraw</h2>
+          <div></div>
+        </div>
+        <div class="balance-card">
+          <h2 id="withdraw-total-balance">৳0.00</h2>
+          <p>Available Balance</p>
+        </div>
+        <div class="options">
+          <div class="option-btn active" data-type="basic">Basic</div>
+          <div class="option-btn" data-type="referral">Referral</div>
+        </div>
+        <div class="wallet-list" id="wallet-list">
+          <div class="add-btn" id="add-wallet-btn" tabindex="0" role="button" style="display: none;"> <i class="fas fa-wallet"></i> Add Wallet
+          </div>
+        </div>
+        <div class="withdraw-section">
+          <div class="withdraw-input-container">
+            <div class="withdraw-input">
+              <span class="currency">৳</span>
+              <input type="number" id="withdraw-amount-input" value="0" min="0">
+            </div>
+            <div class="all-btn-container">
+              <button class="all-btn" id="all-btn">ALL</button>
+            </div>
+          </div>
+          <p>Withdrawable Balance <span id="withdrawable-balance">৳0.00</span><br>Withdrawal Fee <span id="withdrawal-fee">৳5</span></p>
+          <button class="withdraw-btn" id="withdraw-btn">Withdraw</button>
+        </div>
+        <div class="info">
+          <ul>
+            <li>Need to charge ৳5.00 to be able to withdraw</li>
+            <li>Withdraw time 24 hours</li>
+            <li>In-day remaining withdraw times 3</li>
+            <li>Withdraw amount range ৳10.00 - ৳15,000.00</li>
+          </ul>
+        </div>
+        <div class="history">
+          <h4>Transaction History</h4>
+          <div class="history-list-container" id="history-list">
+            <p class="history-empty">No recent withdrawals.</p>
+          </div>
+          <button class="all-history-btn" id="all-history-btn" style="display: none;">All History</button>
+        </div>
+      </div>
+      <div id="add-wallet-page">
+        <div class="add-wallet-header">
+          <i class="fas fa-arrow-left back-btn" id="add-wallet-back-btn-wallet"></i>
+          <h3 class="page-title">Add Wallet</h3>
+          <div></div>
+        </div>
+        <div class="form-group">
+          <label for="wallet-type">Wallet Type</label>
+          <select id="wallet-type">
+            <option value="Bkash">Bkash</option>
+            <option value="Nagad">Nagad</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="wallet-number">Wallet Number (11 digits)</label>
+          <input type="text" id="wallet-number" placeholder="e.g., 01712345678" maxlength="11">
+          <div class="error-message" id="error-message">Please enter a valid 11-digit number.</div>
+        </div>
+        <button class="save-btn" id="save-wallet-btn">Save Wallet</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal" id="universal-modal">
+    <div class="modal-content">
+      <h3 id="modal-title"></h3>
+      <p id="modal-message"></p>
+      <button id="modal-close-btn">OK</button>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <a href="index.html" class="nav-btn" aria-label="Home" data-section="home" id="nav-home-btn">
+      <i class="fas fa-home"></i><span>Home</span>
+    </a>
+    <a href="agency.html" class="nav-btn" aria-label="Agency" data-section="agency">
+      <i class="fas fa-building"></i><span>Agency</span>
+    </a>
+    <a href="center.html" class="nav-btn submit-btn" aria-label="Submit Task" data-section="submit">
+      <i class="fas fa-rocket"></i>
+    </a>
+    <button class="nav-btn active" aria-label="Wallet" data-section="wallet" id="nav-wallet-btn">
+      <i class="fas fa-wallet"></i><span>Wallet</span>
+    </button>
+    <a href="account.html" class="nav-btn" aria-label="Account" data-section="account">
+      <i class="fas fa-user"></i><span>Account</span>
+    </a>
+  </div>
+  <script type="module">
+    // Import Firebase SDK (updated to version 10.12.2)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyB3QmMK7kZfZp9skTVzgbn_xQ81lE0oBUA",
+      authDomain: "index-912c0.firebaseapp.com",
+      databaseURL: "https://index-912c0-default-rtdb.firebaseio.com",
+      projectId: "index-912c0",
+      storageBucket: "index-912c0.firebasestorage.app",
+      messagingSenderId: "30367455",
+      appId: "1:30367455:web:dd12ad0876210d9309d36a",
+      measurementId: "G-6CF9VQJ18P"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Global Variables
+    let currentUserUid = null;
+    let basicBalance = 0.00;
+    let referralBalance = 0.00;
+    let selectedBalanceType = 'basic';
+    let walletDetailsList = [];
+    let selectedWallet = null;
+    const withdrawalFee = 5.00;
+    let transactionHistory = [];
+    let withdrawalRequests = [];
+    let showAllHistory = false;
+    let showAllWalletTransactions = false;
+
+    // Utility Functions
+    const G_ID = (id) => document.getElementById(id);
+    const Q_ALL = (selector, parent = document) => parent.querySelectorAll(selector);
+
+    const universalModal = G_ID('universal-modal');
+    const modalTitle = G_ID('modal-title');
+    const modalMessage = G_ID('modal-message');
+    const modalCloseBtn = G_ID('modal-close-btn');
+
+    const showModal = (title, message) => {
+      if (modalTitle) modalTitle.textContent = title;
+      if (modalMessage) modalMessage.textContent = message;
+      if (universalModal) universalModal.style.display = 'flex';
+      if (modalCloseBtn) modalCloseBtn.focus();
+    };
+
+    if (modalCloseBtn) {
+      modalCloseBtn.addEventListener('click', () => {
+        if (universalModal) universalModal.style.display = 'none';
+      });
+      modalCloseBtn.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          if (universalModal) universalModal.style.display = 'none';
+        }
+      });
+    }
+
+    const addClickAndKeypressListener = (element, handler) => {
+      if (!element) return;
+      element.addEventListener('click', handler);
+      element.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handler(e);
+        }
+      });
+    };
+
+    // DOM Elements
+    const walletPage = G_ID('wallet-page');
+    const withdrawPage = G_ID('withdraw-page');
+    const addWalletPage = G_ID('add-wallet-page');
+    const walletTotalBalance = G_ID('wallet-total-balance');
+    const walletBasicBalance = G_ID('wallet-basic-balance');
+    const walletReferralBalance = G_ID('wallet-referral-balance');
+    const walletCardBasic = G_ID('wallet-card-basic');
+    const walletCardReferral = G_ID('wallet-card-referral');
+    const walletTabs = Q_ALL('.wallet-tab');
+    const walletCards = Q_ALL('.wallet-card');
+    const addWalletBtn = G_ID('add-wallet-btn');
+    const addFundsBtn = G_ID('add-funds-btn');
+    const optionBtns = Q_ALL('.option-btn');
+    const withdrawAmountInput = G_ID('withdraw-amount-input');
+    const withdrawTotalBalance = G_ID('withdraw-total-balance');
+    const withdrawableBalance = G_ID('withdrawable-balance');
+    const allBtn = G_ID('all-btn');
+    const withdrawBtn = G_ID('withdraw-btn');
+    const walletList = G_ID('wallet-list');
+    const walletType = G_ID('wallet-type');
+    const walletNumber = G_ID('wallet-number');
+    const errorMessage = G_ID('error-message');
+    const saveWalletBtn = G_ID('save-wallet-btn');
+    const walletTransactionList = G_ID('wallet-transaction-list');
+    const walletAllTransactionsBtn = G_ID('wallet-all-transactions-btn');
+    const historyList = G_ID('history-list');
+    const allHistoryBtn = G_ID('all-history-btn');
+
+    // Firebase Data Interaction Functions
+    const getUserData = async (uid) => {
+      const userDocRef = doc(db, 'users', uid);
+      const userDocSnap = await getDoc(userDocRef);
+      return userDocSnap.exists() ? userDocSnap.data() : null;
+    };
+
+    const initializeUserData = async (uid) => {
+      const userDocRef = doc(db, 'users', uid);
+      await setDoc(userDocRef, {
+        basicBalance: 0.00,
+        referralBalance: 0.00,
+        wallets: [],
+        transactions: [],
+        withdrawals: []
+      }, { merge: true });
+    };
+
+    const updateBalances = async (uid, newBasicBalance, newReferralBalance) => {
+      const userDocRef = doc(db, 'users', uid);
+      await updateDoc(userDocRef, {
+        basicBalance: newBasicBalance,
+        referralBalance: newReferralBalance
+      });
+    };
+
+    const addWalletToFirestore = async (uid, newWallet) => {
+      const userDocRef = doc(db, 'users', uid);
+      await updateDoc(userDocRef, {
+        wallets: arrayUnion(newWallet)
+      });
+    };
+
+    const removeWalletFromFirestore = async (uid, walletToRemove) => {
+      const userDocRef = doc(db, 'users', uid);
+      await updateDoc(userDocRef, {
+        wallets: arrayRemove(walletToRemove)
+      });
+    };
+
+    const addTransactionToFirestore = async (uid, transaction) => {
+      const userDocRef = doc(db, 'users', uid);
+      await updateDoc(userDocRef, {
+        transactions: arrayUnion(transaction)
+      });
+    };
+
+    const addWithdrawalRequestToFirestore = async (uid, withdrawal) => {
+      const userDocRef = doc(db, 'users', uid);
+      await updateDoc(userDocRef, {
+        withdrawals: arrayUnion(withdrawal)
+      });
+    };
+
+    // UI Update Logic
+    const updateUI = () => {
+      const totalBalance = basicBalance + referralBalance;
+      if (walletTotalBalance) walletTotalBalance.textContent = `৳${totalBalance.toFixed(2)}`;
+      if (walletBasicBalance) walletBasicBalance.textContent = `৳${basicBalance.toFixed(2)}`;
+      if (walletReferralBalance) walletReferralBalance.textContent = `৳${referralBalance.toFixed(2)}`;
+      if (walletCardBasic) walletCardBasic.textContent = `৳${basicBalance.toFixed(2)}`;
+      if (walletCardReferral) walletCardReferral.textContent = `৳${referralBalance.toFixed(2)}`;
+      if (withdrawTotalBalance) withdrawTotalBalance.textContent = `৳${totalBalance.toFixed(2)}`;
+      if (withdrawableBalance) withdrawableBalance.textContent = `৳${(selectedBalanceType === 'basic' ? basicBalance : referralBalance).toFixed(2)}`;
+      renderWalletList();
+      renderHistory(walletTransactionList, walletAllTransactionsBtn, showAllWalletTransactions, 'transaction');
+      renderHistory(historyList, allHistoryBtn, showAllHistory, 'withdrawal');
+    };
+
+    const showWalletSubPage = (page) => {
+      if (walletPage) walletPage.classList.remove('active-page');
+      if (withdrawPage) withdrawPage.classList.remove('active-page');
+      if (addWalletPage) addWalletPage.classList.remove('active-page');
+      if (page === 'wallet' && walletPage) walletPage.classList.add('active-page');
+      else if (page === 'withdraw' && withdrawPage) withdrawPage.classList.add('active-page');
+      else if (page === 'add-wallet' && addWalletPage) addWalletPage.classList.add('active-page');
+      const walletPageContainerElement = G_ID('wallet-page-container');
+      if (walletPageContainerElement) walletPageContainerElement.scrollTop = 0;
+    };
+
+    addClickAndKeypressListener(G_ID('withdraw-nav-btn-wallet'), () => showWalletSubPage('withdraw'));
+    addClickAndKeypressListener(G_ID('withdraw-back-btn-wallet'), () => showWalletSubPage('wallet'));
+    addClickAndKeypressListener(G_ID('add-wallet-back-btn-wallet'), () => {
+      showWalletSubPage('withdraw');
+      if (walletNumber) walletNumber.value = '';
+      if (errorMessage) errorMessage.style.display = 'none';
+    });
+    addClickAndKeypressListener(addWalletBtn, () => showWalletSubPage('add-wallet'));
+
+    [...walletTabs, ...optionBtns].forEach(element => {
+      addClickAndKeypressListener(element, () => {
+        const type = element.dataset.tab || element.dataset.type;
+        walletTabs.forEach(t => t.classList.remove('active'));
+        walletCards.forEach(c => c.classList.remove('active'));
+        optionBtns.forEach(o => o.classList.remove('active'));
+        Q_ALL(`[data-tab="${type}"]`).forEach(el => el.classList.add('active'));
+        Q_ALL(`[data-type="${type}"]`).forEach(el => el.classList.add('active'));
+        selectedBalanceType = type;
+        if (withdrawAmountInput) withdrawAmountInput.value = 0;
+        updateUI();
+      });
+    });
+
+    addClickAndKeypressListener(allBtn, () => {
+      if (withdrawAmountInput) {
+        withdrawAmountInput.value = (selectedBalanceType === 'basic' ? basicBalance : referralBalance).toFixed(2);
+      }
+    });
+
+    const formatDateTime = () => new Date().toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true });
+
+    const renderWalletList = () => {
+      if (!walletList) return;
+      walletList.innerHTML = '';
+      walletDetailsList.forEach((wallet, index) => {
+        const savedWallet = document.createElement('div');
+        savedWallet.className = `saved-wallet ${selectedWallet && selectedWallet.number === wallet.number && selectedWallet.type === wallet.type ? 'selected' : ''}`;
+        savedWallet.setAttribute('tabindex', '0');
+        savedWallet.setAttribute('role', 'button');
+        const walletIconClass = wallet.type === 'Bkash' ? 'wallet-icon Bkash' : 'wallet-icon';
+        const walletIconLetter = wallet.type.charAt(0);
+        savedWallet.innerHTML = `
+          <div class="${walletIconClass}">${walletIconLetter}</div>
+          <div class="wallet-details">
+            <span>${wallet.type}</span>
+            <span>${wallet.number}</span>
+          </div>
+          <i class="fas fa-trash-alt delete-btn" tabindex="0" role="button" aria-label="Delete wallet ${wallet.type} ${wallet.number}"></i>
+        `;
+        addClickAndKeypressListener(savedWallet, (e) => {
+          if (!e.target.classList.contains('delete-btn')) {
+            selectedWallet = wallet;
+            updateUI();
+          }
+        });
+        addClickAndKeypressListener(savedWallet.querySelector('.delete-btn'), async (e) => {
+          e.stopPropagation();
+          if (confirm('Are you sure you want to delete this wallet?')) {
+            if (currentUserUid) {
+              await removeWalletFromFirestore(currentUserUid, wallet);
+              showModal('Success', 'Wallet deleted successfully.');
+            } else {
+              showModal('Error', 'User not logged in.');
+            }
+          }
+        });
+        walletList.appendChild(savedWallet);
+      });
+      if (addWalletBtn) {
+        if (walletDetailsList.length < 2) {
+          addWalletBtn.style.display = 'flex';
+          walletList.appendChild(addWalletBtn);
+        } else {
+          addWalletBtn.style.display = 'none';
+        }
+      }
+    };
+
+    const renderHistory = (container, allBtn, showAll, historyType) => {
+      if (!container) return;
+      container.innerHTML = '';
+      const data = historyType === 'withdrawal' ? withdrawalRequests : transactionHistory;
+      if (data.length === 0) {
+        container.innerHTML = `<p class="${historyType}-empty">No recent ${historyType === 'withdrawal' ? 'withdrawals' : 'transactions'}.</p>`;
+        if (allBtn) allBtn.style.display = 'none';
+        return;
+      }
+      const itemsToShow = showAll ? data : data.slice(0, 4);
+      itemsToShow.forEach(itemData => {
+        const item = document.createElement('div');
+        item.className = `${historyType}-item`;
+        item.setAttribute('tabindex', '0');
+        item.setAttribute('role', 'listitem');
+        if (historyType === 'withdrawal') {
+          item.innerHTML = `
+            <div class="history-details">
+              <span class="date-time">${itemData.dateTime}</span>
+              <span class="amount">৳${itemData.amount.toFixed(2)}</span>
+              <span class="wallet-type">${itemData.walletType}</span>
+            </div>
+            <span class="history-status ${itemData.status}">${itemData.status.charAt(0).toUpperCase() + itemData.status.slice(1)}</span>
+          `;
+        } else {
+          item.innerHTML = `
+            <span>${itemData.description}</span>
+            <span class="amount ${itemData.type === 'add' ? 'in' : 'out'}">${itemData.type === 'add' ? '+' : '-'}৳${itemData.amount.toFixed(2)}</span>
+          `;
+        }
+        container.appendChild(item);
+      });
+      if (allBtn) allBtn.style.display = data.length > 4 ? 'block' : 'none';
+      if (allBtn) allBtn.textContent = showAll ? 'Show Less' : `All ${historyType === 'withdrawal' ? 'History' : 'Transactions'}`;
+    };
+
+    addClickAndKeypressListener(allHistoryBtn, () => {
+      showAllHistory = !showAllHistory;
+      renderHistory(historyList, allHistoryBtn, showAllHistory, 'withdrawal');
+    });
+
+    addClickAndKeypressListener(walletAllTransactionsBtn, () => {
+      showAllWalletTransactions = !showAllWalletTransactions;
+      renderHistory(walletTransactionList, walletAllTransactionsBtn, showAllWalletTransactions, 'transaction');
+    });
+
+    addClickAndKeypressListener(withdrawBtn, async () => {
+      if (!currentUserUid) {
+        showModal('Error', 'Please log in to make a withdrawal.');
+        return;
+      }
+      if (walletDetailsList.length === 0) {
+        showModal('Error', 'Please add a wallet to withdraw.');
+        return;
+      }
+      if (!selectedWallet) {
+        showModal('Error', 'Please select a wallet to withdraw.');
+        return;
+      }
+      const inputAmount = parseFloat(withdrawAmountInput.value) || 0;
+      const currentBalance = selectedBalanceType === 'basic' ? basicBalance : referralBalance;
+      const totalDeduction = inputAmount + withdrawalFee;
+      if (inputAmount <= 0) {
+        showModal('Error', 'Please enter a valid amount.');
+        return;
+      }
+      if (totalDeduction > currentBalance) {
+        showModal('Error', 'Insufficient balance (including withdrawal fee).');
+        return;
+      }
+      if (inputAmount < 10 || inputAmount > 15000) {
+        showModal('Error', 'Withdrawal amount must be between ৳10.00 and ৳15,000.00.');
+        return;
+      }
+      try {
+        let newBasicBalance = basicBalance;
+        let newReferralBalance = referralBalance;
+        if (selectedBalanceType === 'basic') {
+          newBasicBalance -= totalDeduction;
+        } else {
+          newReferralBalance -= totalDeduction;
+        }
+        await updateBalances(currentUserUid, newBasicBalance, newReferralBalance);
+        const newWithdrawal = {
+          id: 'req_' + Date.now(),
+          dateTime: formatDateTime(),
+          amount: inputAmount,
+          walletType: selectedWallet.type,
+          walletNumber: selectedWallet.number,
+          balanceType: selectedBalanceType,
+          fee: withdrawalFee,
+          status: 'pending'
+        };
+        await addWithdrawalRequestToFirestore(currentUserUid, newWithdrawal);
+        if (withdrawAmountInput) withdrawAmountInput.value = 0;
+        showModal('Success', `Withdrawal request of ৳${inputAmount.toFixed(2)} submitted! (Fee: ৳${withdrawalFee.toFixed(2)}) Awaiting admin approval. Balance updated.`);
+      } catch (error) {
+        console.error("Error during withdrawal:", error);
+        showModal('Error', 'Failed to process withdrawal: ' + error.message);
+      }
+    });
+
+    addClickAndKeypressListener(saveWalletBtn, async () => {
+      if (!currentUserUid) {
+        showModal('Error', 'Please log in to save a wallet.');
+        return;
+      }
+      const number = walletNumber.value.trim();
+      const isValidNumber = /^\d{11}$/.test(number);
+      if (!isValidNumber) {
+        if (errorMessage) errorMessage.style.display = 'block';
+        if (walletNumber) walletNumber.focus();
+        return;
+      }
+      const existingWallet = walletDetailsList.find(w => w.number === number && w.type === walletType.value);
+      if (existingWallet) {
+        showModal('Error', 'This wallet is already added.');
+        return;
+      }
+      if (walletDetailsList.length >= 2) {
+        showModal('Limit Exceeded', 'You can only save up to 2 wallets.');
+        return;
+      }
+      if (errorMessage) errorMessage.style.display = 'none';
+      const newWallet = { type: walletType.value, number };
+      try {
+        await addWalletToFirestore(currentUserUid, newWallet);
+        selectedWallet = newWallet;
+        showWalletSubPage('withdraw');
+        if (walletNumber) walletNumber.value = '';
+        showModal('Success', 'Wallet saved successfully!');
+      } catch (error) {
+        console.error("Error saving wallet:", error);
+        showModal('Error', 'Failed to save wallet: ' + error.message);
+      }
+    });
+
+    addClickAndKeypressListener(addFundsBtn, async () => {
+      if (!currentUserUid) {
+        showModal('Error', 'Please log in to add funds.');
+        return;
+      }
+      const amountToAdd = 100.00;
+      try {
+        await updateBalances(currentUserUid, basicBalance + amountToAdd, referralBalance);
+        const newTransaction = {
+          id: 'tran_' + Date.now(),
+          dateTime: formatDateTime(),
+          description: `Deposit to Basic Wallet`,
+          amount: amountToAdd,
+          type: 'add',
+          balanceType: 'basic'
+        };
+        await addTransactionToFirestore(currentUserUid, newTransaction);
+        showModal('Funds Added', `Successfully added ৳${amountToAdd.toFixed(2)} to your Basic Wallet.`);
+      } catch (error) {
+        console.error("Error adding funds:", error);
+        showModal('Error', 'Failed to add funds: ' + error.message);
+      }
+    });
+
+    const navButtons = Q_ALL('.nav-btn');
+    const setActiveNav = (section) => {
+      navButtons.forEach(btn => btn.classList.remove('active'));
+      const targetButton = G_ID(`nav-${section}-btn`) || Q_ALL(`.nav-btn[data-section="${section}"]`)[0];
+      if (targetButton) targetButton.classList.add('active');
+    };
+
+    navButtons.forEach(btn => {
+      if (btn.tagName === 'BUTTON') {
+        addClickAndKeypressListener(btn, () => {
+          const section = btn.dataset.section;
+          setActiveNav(section);
+          if (section === 'wallet') {
+            showWalletSubPage('wallet');
+          }
+        });
+      } else if (btn.tagName === 'A') {
+        addClickAndKeypressListener(btn, (e) => {
+          const section = btn.dataset.section;
+          if (section !== 'home') {
+            e.preventDefault();
+            setActiveNav(section);
+            setTimeout(() => { window.location.href = btn.href; }, 100);
+          } else {
+            setActiveNav(section);
+          }
+        });
+      }
+    });
+
+    // Firebase Authentication State Listener
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUserUid = user.uid;
+        console.log("User logged in:", currentUserUid);
+        const userDocRef = doc(db, 'users', currentUserUid);
+        onSnapshot(userDocRef, (docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            basicBalance = data.basicBalance || 0.00;
+            referralBalance = data.referralBalance || 0.00;
+            walletDetailsList = data.wallets || [];
+            transactionHistory = data.transactions || [];
+            withdrawalRequests = data.withdrawals || [];
+            if (selectedWallet) {
+              const foundWallet = walletDetailsList.find(w => w.number === selectedWallet.number && w.type === selectedWallet.type);
+              if (!foundWallet) {
+                selectedWallet = walletDetailsList.length > 0 ? walletDetailsList[0] : null;
+              }
+            } else if (walletDetailsList.length > 0) {
+              selectedWallet = walletDetailsList[0];
+            } else {
+              selectedWallet = null;
+            }
+            updateUI();
+          } else {
+            console.log("User document does not exist, initializing...");
+            initializeUserData(currentUserUid);
+            updateUI();
+          }
+        }, (error) => {
+          console.error("Error listening to user document:", error);
+          showModal('Error', 'Failed to load user data: ' + error.message);
+        });
+      } else {
+        currentUserUid = null;
+        console.log("User logged out");
+        basicBalance = 0.00;
+        referralBalance = 0.00;
+        walletDetailsList = [];
+        selectedWallet = null;
+        transactionHistory = [];
+        withdrawalRequests = [];
+        updateUI();
+        autoLoginDummyUser();
+      }
+    });
+
+    // Auto-login for testing purposes
+    async function autoLoginDummyUser() {
+      const dummyEmail = "test@example.com";
+      const dummyPassword = "password123";
+      try {
+        await signInWithEmailAndPassword(auth, dummyEmail, dummyPassword);
+        console.log("Auto-logged in as dummy user.");
+      } catch (error) {
+        console.error("Error during auto-login:", error);
+        if (error.code === 'auth/user-not-found') {
+          console.log("Dummy user not found, creating new dummy user...");
+          try {
+            const userCredential = await createUserWithEmailAndPassword(auth, dummyEmail, dummyPassword);
+            console.log("Dummy user created and logged in:", userCredential.user.uid);
+            await initializeUserData(userCredential.user.uid);
+          } catch (createError) {
+            console.error("Error creating dummy user:", createError);
+            showModal('Authentication Error', 'Failed to create dummy user: ' + createError.message);
+          }
+        } else {
+          showModal('Authentication Error', 'Failed to log in: ' + error.message);
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const path = window.location.pathname;
+      let currentSection = 'wallet';
+      if (path.includes('agency.html')) currentSection = 'agency';
+      else if (path.includes('center.html')) currentSection = 'submit';
+      else if (path.includes('account.html')) currentSection = 'account';
+      else if (path === '/' || path.includes('index.html')) currentSection = 'home';
+      setActiveNav(currentSection);
+      if (currentSection === 'wallet') {
+        showWalletSubPage('wallet');
+      }
+    });
+  </script>
+
+<footer style="background:#222; color:white; text-align:center; padding:15px; margin-top:20px;">
+  <p>&copy; 2025 Takoven. All Rights Reserved.</p>
+</footer>
+
+
+<div style="max-width:600px; margin:20px auto; text-align:center; padding:20px; border:1px solid #ccc; border-radius:10px;">
+  <h2>My Wallet</h2>
+  <p style="font-size:20px;">Current Balance: <span class="wallet-balance">$0</span></p>
+  <button onclick="addFunds()" style="padding:10px 20px; margin:5px;">Add Funds (+10)</button>
+  <button onclick="withdrawFunds()" style="padding:10px 20px; margin:5px;">Withdraw (-10)</button>
+</div>
+
+<script>
+function loadBalance() {
+  let balance = localStorage.getItem("walletBalance");
+  if (balance === null) {
+    balance = 120; // default balance
+    localStorage.setItem("walletBalance", balance);
+  }
+  document.querySelectorAll(".wallet-balance").forEach(el => {
+    el.innerText = "$" + balance;
+  });
+}
+
+function addFunds() {
+  let balance = parseInt(localStorage.getItem("walletBalance") || "0");
+  balance += 10;
+  localStorage.setItem("walletBalance", balance);
+  loadBalance();
+}
+
+function withdrawFunds() {
+  let balance = parseInt(localStorage.getItem("walletBalance") || "0");
+  if (balance >= 10) {
+    balance -= 10;
+    localStorage.setItem("walletBalance", balance);
+  } else {
+    alert("Not enough balance!");
+  }
+  loadBalance();
+}
+
+document.addEventListener("DOMContentLoaded", loadBalance);
+</script>
+
+</body>
+</html>
